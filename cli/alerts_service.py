@@ -1,0 +1,239 @@
+import json
+import logging
+import urllib.request
+from datetime import datetime
+
+# Mapping of location names (lowercased) to official Location UIDs
+LOCATION_UID_MAP = {
+    "хмельницька область": "3",
+    "вінницька область": "4",
+    "рівненська область": "5",
+    "волинська область": "8",
+    "дніпропетровська область": "9",
+    "житомирська область": "10",
+    "закарпатська область": "11",
+    "запорізька область": "12",
+    "івано-франківська область": "13",
+    "київська область": "14",
+    "кіровоградська область": "15",
+    "луганська область": "16",
+    "миколаївська область": "17",
+    "одеська область": "18",
+    "полтавська область": "19",
+    "сумська область": "20",
+    "тернопільська область": "21",
+    "харківська область": "22",
+    "херсонська область": "23",
+    "черкаська область": "24",
+    "чернігівська область": "25",
+    "чернівецька область": "26",
+    "львівська область": "27",
+    "донецька область": "28",
+    "автономна республіка крим": "29",
+    "крим": "29",
+    "м. севастополь": "30",
+    "севастополь": "30",
+    "м. київ": "31",
+    "київ": "31",
+}
+
+# Mapping of threat types to human-readable Ukrainian descriptions for display
+THREAT_DESCRIPTIONS = {
+    "tactic_aircraft_activity": "✈️ Активність тактичної авіації",
+    "strategic_aircraft_activity": "🛫 Зліт стратегічної авіації",
+    "mig31k_departure": "🚀 Зліт МіГ-31К (загроза 'Кинджал')",
+    "ballistic_missiles": "💥 Загроза балістичного озброєння",
+    "cruise_missiles": "🚀 Загроза крилатих ракет",
+    "unspecified_missiles": "🚀 Ракета в напрямку локації",
+    "drones": "🛸 БпЛА / Дрони (Шахеди)",
+    "guided_aerial_bombs": "💣 Загроза КАБ/ФАБ",
+    "air_defense": "🛡️ Робота ППО",
+    "unknown": "❓ Невизначена загроза",
+}
+
+
+def resolve_location_uid(location_input: str) -> str:
+    """Resolves location title string or numeric string to a valid Location UID string."""
+    loc_str = str(location_input).strip()
+    if loc_str.isdigit():
+        return loc_str
+    loc_lower = loc_str.lower()
+    return LOCATION_UID_MAP.get(loc_lower, loc_str)
+
+
+def fetch_api_json(url: str, token: str):
+    """Fetches JSON directly from the alerts.in.ua REST API."""
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(req) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def format_level_badge(alert_level: str) -> str:
+    """Formats the alert severity level (red / yellow) directly from API alert_level field."""
+    if alert_level == "red":
+        return "🔴 ЧЕРВОНИЙ (Повітряна тривога / Загальна небезпека)"
+    elif alert_level == "yellow":
+        return "🟡 ЖОВТИЙ (Підвищена загроза / Часткова небезпека)"
+    return f"⚪ {str(alert_level).upper()}"
+
+
+def format_duration(started_at, finished_at) -> str:
+    """Calculates and formats the alert duration in Ukrainian for console display."""
+    if not started_at or not finished_at:
+        return "триває / не вказано"
+    try:
+        s_dt = datetime.fromisoformat(str(started_at).replace("Z", "+00:00")) if isinstance(started_at, str) else started_at
+        f_dt = datetime.fromisoformat(str(finished_at).replace("Z", "+00:00")) if isinstance(finished_at, str) else finished_at
+        
+        diff_seconds = int((f_dt - s_dt).total_seconds())
+        if diff_seconds < 0:
+            return "не вказано"
+        
+        minutes = diff_seconds // 60
+        hours = minutes // 60
+        rem_minutes = minutes % 60
+        
+        if hours > 0:
+            return f"{hours} год {rem_minutes} хв"
+        return f"{minutes} хв"
+    except Exception:
+        return "не вказано"
+
+
+def check_active_alerts(api_token: str, location: str, verbose: bool = False):
+    """Fetches and displays current active alerts (red and yellow) directly from the API."""
+    current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+    print("\n" + "=" * 60)
+    print(f" 📍 Перевірка активних тривог для: {location}")
+    print(f" ⏰ Час перевірки: {current_time}")
+    print("=" * 60)
+
+    try:
+        url = "https://api.alerts.in.ua/v1/alerts/active.json"
+        raw_data = fetch_api_json(url, api_token)
+        alerts_list = raw_data.get("alerts", [])
+
+        target_uid = resolve_location_uid(location)
+
+        # Filter alerts for specified location (matching UID, title, or oblast)
+        target_alerts = [
+            a for a in alerts_list
+            if str(a.get("location_uid", "")) == location
+            or str(a.get("location_uid", "")) == target_uid
+            or str(a.get("location_oblast_uid", "")) == target_uid
+            or str(a.get("location_title", "")).lower() == location.lower()
+            or str(a.get("location_oblast", "")).lower() == location.lower()
+        ]
+
+        if verbose:
+            print("\n" + "🐛 [VERBOSE DEBUG LOG]".center(60, "-"))
+            print(f"📡 HTTP Request Endpoint: {url}")
+            print(f"📦 Raw API Response Payload (Всього активних тривог в Україні: {len(alerts_list)}):")
+            print(json.dumps(alerts_list, indent=2, ensure_ascii=False, default=str))
+            print(f"\n🎯 Filtered Alerts for Location '{location}' (UID: {target_uid}, {len(target_alerts)} items):")
+            print(json.dumps(target_alerts, indent=2, ensure_ascii=False, default=str))
+            print("-" * 60 + "\n")
+
+        if not target_alerts:
+            print(f" ✅ У локації '{location}' НЕМАЄ активних тривог (ані червоних, ані жовтих).")
+            print("=" * 60 + "\n")
+            return
+
+        has_red = any(a.get("alert_level") == "red" for a in target_alerts)
+        has_yellow = any(a.get("alert_level") == "yellow" for a in target_alerts)
+
+        if has_red and has_yellow:
+            print(" 🚨 ЗАГАЛЬНИЙ СТАТУС: ЧЕРВОНИЙ ТА ЖОВТИЙ (Комплексна небезпека)")
+        elif has_red:
+            print(" 🔴 ЗАГАЛЬНИЙ СТАТУС: ЧЕРВОНИЙ (Повітряна тривога / Висока небезпека)")
+        elif has_yellow:
+            print(" 🟡 ЗАГАЛЬНИЙ СТАТУС: ЖОВТИЙ (Підвищена загроза / Часткова небезпека)")
+        print("-" * 60)
+
+        for alert in target_alerts:
+            loc_title = alert.get("location_title", location)
+            alert_type = alert.get("alert_type", "air_raid")
+            started_at = alert.get("started_at", "—")
+            raw_level = alert.get("alert_level", "red")
+            badge = format_level_badge(raw_level)
+
+            print(f"\n 📍 Локація: {loc_title}")
+            print(f" 🚨 СТАТУС ТРИВОГИ: {badge}")
+            print(f" 📌 Тип тривоги: {alert_type}")
+            print(f" ⏱️ Початок: {started_at}")
+
+            threats = alert.get("threats") or []
+            if threats:
+                print("\n 🔍 Активні деталізовані загрози:")
+                for threat in threats:
+                    t_type = threat.get("threat_type", "unknown")
+                    t_level = threat.get("level", "yellow")
+                    t_msg = threat.get("source_message", "")
+                    
+                    type_str = THREAT_DESCRIPTIONS.get(t_type, f"Загроза: {t_type}")
+                    level_icon = "🔴" if t_level == "red" else "🟡"
+                    
+                    msg_str = f" ({t_msg})" if t_msg else ""
+                    print(f"   {level_icon} {type_str}{msg_str}")
+            else:
+                print(" ℹ️ Додаткових конкретизованих загроз не вказано.")
+
+        print("\n" + "=" * 60 + "\n")
+
+    except Exception as e:
+        print(f"❌ Помилка під час отримання активних даних: {e}")
+
+
+def check_alerts_history(api_token: str, location: str, period: str = "month_ago", limit: int = 10, verbose: bool = False):
+    """Fetches and displays alert history for the specified period directly from the API."""
+    print("\n" + "=" * 60)
+    print(f" 📜 Історія тривог для: {location} (Період: {period})")
+    print(f" ⚠️ Зверніть увагу: ліміт запитів історії — 2 запити на хвилину.")
+    print("=" * 60)
+
+    try:
+        target_uid = resolve_location_uid(location)
+        url = f"https://api.alerts.in.ua/v1/regions/{target_uid}/alerts/{period}.json"
+        raw_data = fetch_api_json(url, api_token)
+        alerts_list = raw_data.get("alerts", [])
+
+        if verbose:
+            print("\n" + "🐛 [VERBOSE DEBUG LOG]".center(60, "-"))
+            print(f"📡 HTTP Request Endpoint: {url}")
+            print(f"📦 Raw JSON Response Payload ({len(alerts_list)} items total):")
+            print(json.dumps(alerts_list[:limit], indent=2, ensure_ascii=False, default=str))
+            print("-" * 60 + "\n")
+
+        if not alerts_list:
+            print(f" ℹ️ Історія тривог для '{location}' порожня або відсутня.")
+            print("=" * 60 + "\n")
+            return
+
+        total_count = len(alerts_list)
+        show_count = min(limit, total_count)
+        print(f"\n 📊 Всього записів за період: {total_count} (показано {show_count}):\n")
+
+        for idx, alert in enumerate(alerts_list[:limit], 1):
+            alert_id = alert.get("id", "—")
+            loc_title = alert.get("location_title", location)
+            started_at = alert.get("started_at", "—")
+            finished_at = alert.get("finished_at")
+            alert_type = alert.get("alert_type", "air_raid")
+            notes = alert.get("notes", "")
+
+            duration_str = format_duration(started_at, finished_at)
+            finished_display = finished_at if finished_at else "триває / не вказано"
+            notes_str = f" | Примітка: {notes}" if notes else ""
+
+            print(f" {idx:2d}. [ID {alert_id}] {loc_title}")
+            print(f"     ⏱️ Початок:    {started_at}")
+            print(f"     🏁 Завершення: {finished_display}")
+            print(f"     ⏳ Тривалість: {duration_str}")
+            print(f"     📌 Тип:        {alert_type}{notes_str}")
+            print("     " + "-" * 50)
+
+        print("\n" + "=" * 60 + "\n")
+
+    except Exception as e:
+        print(f"❌ Помилка під час завантаження історії: {e}")

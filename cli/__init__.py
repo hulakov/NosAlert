@@ -1,0 +1,1 @@
+"""NosAlert CLI module."""
