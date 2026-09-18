@@ -1,4 +1,6 @@
 {
   "name": "NosAlert - Повітряна тривога України",
+  "country": ["UA"],
   "render_readme": true
 }
+
