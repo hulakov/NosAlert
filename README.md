@@ -75,3 +75,28 @@ python cli/main.py -v -l 17
 | `-n` | `--limit` | `10` | Number of history records to display. |
 | `-p` | `--period` | `"month_ago"` | Period for alert history (`month_ago`). |
 | `-v` | `--verbose` | `False` | Enable verbose logging of raw HTTP API requests and response JSON. |
+
+---
+
+## 🏠 Home Assistant Custom Integration
+
+This repository includes a custom integration for **Home Assistant** located in [`custom_components/nos_alert`](custom_components/nos_alert).
+
+### Features
+- ⚡ **Real-Time Polling:** Polls the official `alerts.in.ua` REST API every **7 seconds** (adhering to the 8–10 req/min API rate limit).
+- 🗺 **Multi-Location Selection:** Select one or multiple regions during setup via UI Config Flow or Options Flow.
+- 🔴🟡 **Alert Level Sensor:** `sensor.<region>_color` reports `"red"`, `"yellow"`, or `"none"`.
+- 🕒 **Start Time Sensor:** `sensor.<region>_start_time` (Device Class: `timestamp`) reports exact ISO 8601 alert start time.
+- 🚨 **Binary Sensor:** `binary_sensor.<region>_air_raid_alert` (Device Class: `safety`) reports `on` during active alert.
+- 📦 **Rich Attributes:** Detailed sub-threats array (threat types, location info, start time, Ukrainian descriptions) stored in `extra_state_attributes["threats"]`.
+
+### Installation Steps
+1. Copy the `custom_components/nos_alert` directory into your Home Assistant configuration folder:
+   ```
+   <ha-config>/custom_components/nos_alert/
+   ```
+2. Restart Home Assistant.
+3. In Home Assistant, navigate to **Settings** -> **Devices & Services** -> **Add Integration**.
+4. Search for **NosAlert (Повітряна тривога України)**.
+5. Enter your `alerts.in.ua` API token and select the regions you wish to monitor.
+

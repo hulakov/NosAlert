@@ -1,0 +1,53 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Налаштування NosAlert",
+        "description": "Введіть ваш офіційний API токен від alerts.in.ua та оберіть регіони для моніторингу.",
+        "data": {
+          "api_token": "API Токен",
+          "locations": "Регіони моніторингу"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Недійсний API токен. Перевірте ваш токен на сторінці alerts.in.ua/api-request.",
+      "no_locations": "Будь ласка, оберіть хоча б один регіон для моніторингу.",
+      "cannot_connect": "Не вдалося з'єднатися з API alerts.in.ua."
+    },
+    "abort": {
+      "already_configured": "Цей акаунт NosAlert вже налаштовано."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметри NosAlert",
+        "description": "Оновіть перелік регіонів для моніторингу.",
+        "data": {
+          "locations": "Регіони моніторингу"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "alert_color": {
+        "name": "Колір тривоги",
+        "state": {
+          "none": "Спокійно",
+          "yellow": "Жовтий рівень",
+          "red": "Червоний рівень"
+        }
+      },
+      "alert_start_time": {
+        "name": "Час початку тривоги"
+      }
+    },
+    "binary_sensor": {
+      "air_raid_alert": {
+        "name": "Повітряна тривога"
+      }
+    }
+  }
+}
