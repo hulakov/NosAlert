@@ -41,6 +41,7 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
     """Binary sensor entity representing overall air raid alert state (ON = Alert Active)."""
 
     _attr_has_entity_name = True
+    _attr_translation_key = "air_raid_alert"
     _attr_device_class = BinarySensorDeviceClass.SAFETY
 
     def __init__(
@@ -53,7 +54,6 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
         self.location = location
         self._slug = slugify(location)
 
-        self._attr_name = "Air Raid Alert"
         self._attr_unique_id = f"nos_alert_{self._slug}_alert"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},

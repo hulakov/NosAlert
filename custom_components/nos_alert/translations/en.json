@@ -33,12 +33,18 @@
   "entity": {
     "sensor": {
       "alert_color": {
-        "name": "Alert Color",
+        "name": "Alert Severity Level",
         "state": {
           "none": "Clear",
-          "yellow": "Yellow Warning",
-          "red": "Red Alert"
+          "yellow": "Partial Warning (Yellow)",
+          "red": "Air Raid Alert! (Red)"
         }
+      },
+      "active_threats": {
+        "name": "Active Threats"
+      },
+      "threat_count": {
+        "name": "Threat Count"
       },
       "alert_start_time": {
         "name": "Alert Start Time"
@@ -46,7 +52,7 @@
     },
     "binary_sensor": {
       "air_raid_alert": {
-        "name": "Air Raid Alert"
+        "name": "Air Raid Alarm"
       }
     }
   }

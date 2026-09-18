@@ -7,6 +7,7 @@ from typing import Any
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -34,15 +35,20 @@ async def async_setup_entry(
 
     for loc in locations:
         entities.append(NosAlertColorSensor(coordinator, loc))
+        entities.append(NosAlertThreatsSensor(coordinator, loc))
+        entities.append(NosAlertThreatCountSensor(coordinator, loc))
         entities.append(NosAlertStartTimeSensor(coordinator, loc))
 
     async_add_entities(entities)
 
 
 class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
-    """Sensor entity representing the alert color status (red, yellow, none)."""
+    """Sensor entity representing the alert color level (red, yellow, none)."""
 
     _attr_has_entity_name = True
+    _attr_translation_key = "alert_color"
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["none", "yellow", "red"]
 
     def __init__(
         self,
@@ -54,7 +60,6 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         self.location = location
         self._slug = slugify(location)
 
-        self._attr_name = f"Alert Color"
         self._attr_unique_id = f"nos_alert_{self._slug}_color"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
@@ -65,7 +70,7 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
 
     @property
     def native_value(self) -> str:
-        """Return the state of the sensor (red, yellow, none)."""
+        """Return the state option of the sensor (red, yellow, none)."""
         loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
         return loc_data.get("alert_level", "none")
 
@@ -76,7 +81,7 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         if state == "red":
             return "mdi:shield-alert"
         elif state == "yellow":
-            return "mdi:shield-half-full"
+            return "mdi:shield-alert-outline"
         return "mdi:shield-check"
 
     @property
@@ -93,10 +98,97 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         }
 
 
+class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
+    """Sensor entity displaying active threats list in human readable format."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "active_threats"
+    _attr_icon = "mdi:radar"
+
+    def __init__(
+        self,
+        coordinator: NosAlertDataUpdateCoordinator,
+        location: str,
+    ) -> None:
+        """Initialize the threats summary sensor."""
+        super().__init__(coordinator)
+        self.location = location
+        self._slug = slugify(location)
+
+        self._attr_unique_id = f"nos_alert_{self._slug}_active_threats"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
+            name=f"NosAlert {location}",
+            manufacturer="alerts.in.ua",
+            model="Air Raid Alert Regional Monitor",
+        )
+
+    @property
+    def native_value(self) -> str:
+        """Return human readable active threats string."""
+        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        if not loc_data.get("is_active"):
+            return "Відсутні"
+
+        threats = loc_data.get("threats", [])
+        if threats:
+            descs = list(dict.fromkeys([t.get("description") for t in threats if t.get("description")]))
+            if descs:
+                return ", ".join(descs)
+
+        return "Повітряна тривога"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return active threats details."""
+        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        threats = loc_data.get("threats", [])
+        return {
+            "threats_count": len(threats),
+            "threats_list": [t.get("description") for t in threats if t.get("description")],
+            "source_messages": loc_data.get("source_messages", []),
+            "threats_detail": threats,
+        }
+
+
+class NosAlertThreatCountSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
+    """Sensor entity representing numeric count of active threats."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "threat_count"
+    _attr_icon = "mdi:counter"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(
+        self,
+        coordinator: NosAlertDataUpdateCoordinator,
+        location: str,
+    ) -> None:
+        """Initialize threat count sensor."""
+        super().__init__(coordinator)
+        self.location = location
+        self._slug = slugify(location)
+
+        self._attr_unique_id = f"nos_alert_{self._slug}_threat_count"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
+            name=f"NosAlert {location}",
+            manufacturer="alerts.in.ua",
+            model="Air Raid Alert Regional Monitor",
+        )
+
+    @property
+    def native_value(self) -> int:
+        """Return number of active threats."""
+        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        return int(loc_data.get("threats_count", 0))
+
+
 class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
     """Sensor entity representing the alert start timestamp."""
 
     _attr_has_entity_name = True
+    _attr_translation_key = "alert_start_time"
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     def __init__(
@@ -109,7 +201,6 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
         self.location = location
         self._slug = slugify(location)
 
-        self._attr_name = f"Alert Start Time"
         self._attr_unique_id = f"nos_alert_{self._slug}_start_time"
         self._attr_icon = "mdi:clock-alert-outline"
         self._attr_device_info = DeviceInfo(
