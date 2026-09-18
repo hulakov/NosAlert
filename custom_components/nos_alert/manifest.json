@@ -1,10 +1,11 @@
 {
   "domain": "nos_alert",
   "name": "NosAlert - Ukraine Air Raid Alerts",
-  "codeowners": ["@vadym"],
+  "codeowners": ["@hulakov"],
   "config_flow": true,
-  "documentation": "https://devs.alerts.in.ua/#documentationgetting_started",
+  "documentation": "https://github.com/hulakov/NosAlert",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/vadym/NosAlert/issues",
+  "issue_tracker": "https://github.com/hulakov/NosAlert/issues",
   "version": "1.0.0"
 }
+
