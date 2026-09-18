@@ -1,4 +1,7 @@
 {
   "name": "NosAlert - Alerts in Ukraine",
+  "country": ["UA"],
   "render_readme": true
 }
+
+
