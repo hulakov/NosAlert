@@ -18,6 +18,17 @@ def parse_args():
         help="Fetch historical alert data instead of current active alerts"
     )
     parser.add_argument(
+        "-m", "--monitor",
+        action="store_true",
+        help="Enable continuous live monitoring mode (polls for status changes)"
+    )
+    parser.add_argument(
+        "-i", "--interval",
+        type=int,
+        default=10,
+        help="Polling interval in seconds for monitoring mode (default: 10s)"
+    )
+    parser.add_argument(
         "-p", "--period",
         type=str,
         default="month_ago",

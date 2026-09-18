@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import urllib.request
 from datetime import datetime
 
@@ -237,3 +238,109 @@ def check_alerts_history(api_token: str, location: str, period: str = "month_ago
 
     except Exception as e:
         print(f"❌ Помилка під час завантаження історії: {e}")
+
+
+def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: bool = False):
+    """Monitors live alert status for a given location, printing updates whenever the state changes."""
+    target_uid = resolve_location_uid(location)
+
+    print("\n" + "=" * 65)
+    print(f" 👀 РЕЖИМ МОНІТОРИНГУ ТРИВОГ ДЛЯ: {location}")
+    print(f" ⏱️ Інтервал перевірки: кожні {interval} сек. (Натисніть Ctrl+C для виходу)")
+    print("=" * 65)
+
+    previous_state = None
+
+    try:
+        while True:
+            current_time = datetime.now().strftime("%H:%M:%S")
+            url = "https://api.alerts.in.ua/v1/alerts/active.json"
+
+            try:
+                raw_data = fetch_api_json(url, api_token)
+                alerts_list = raw_data.get("alerts", [])
+            except Exception as req_err:
+                print(f" ⚠️ [{current_time}] Помилка з'єднання з API: {req_err}")
+                time.sleep(interval)
+                continue
+
+            target_alerts = [
+                a for a in alerts_list
+                if str(a.get("location_uid", "")) == location
+                or str(a.get("location_uid", "")) == target_uid
+                or str(a.get("location_oblast_uid", "")) == target_uid
+                or str(a.get("location_title", "")).lower() == location.lower()
+                or str(a.get("location_oblast", "")).lower() == location.lower()
+            ]
+
+            current_state = {}
+            for a in target_alerts:
+                a_id = a.get("id")
+                current_state[a_id] = {
+                    "location_title": a.get("location_title"),
+                    "alert_level": a.get("alert_level", "red"),
+                    "alert_type": a.get("alert_type", "air_raid"),
+                    "started_at": a.get("started_at"),
+                    "threats": a.get("threats") or [],
+                }
+
+            if previous_state is None:
+                if not current_state:
+                    print(f" [{current_time}] ✅ У локації '{location}' НЕМАЄ активних тривог. Моніторинг активний...")
+                else:
+                    print(f" [{current_time}] 🚨 ВИЯВЛЕНО АКТИВНІ ТРИВОГИ:")
+                    for a_id, item in current_state.items():
+                        badge = format_level_badge(item["alert_level"])
+                        print(f"   • {item['location_title']} | {badge} | Початок: {item['started_at']}")
+                        if item["threats"]:
+                            for t in item["threats"]:
+                                icon = "🔴" if t.get("level") == "red" else "🟡"
+                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
+                                print(f"     {icon} {desc}{msg}")
+                previous_state = current_state
+            else:
+                if current_state != previous_state:
+                    new_alert_ids = set(current_state.keys()) - set(previous_state.keys())
+                    finished_alert_ids = set(previous_state.keys()) - set(current_state.keys())
+                    updated_alert_ids = set(current_state.keys()) & set(previous_state.keys())
+
+                    print(f"\n🔔 [{current_time}] ⚡ ЗМІНА СТАТУСУ ТРИВОГИ:")
+
+                    for a_id in finished_alert_ids:
+                        old_item = previous_state[a_id]
+                        print(f"   🟢 ВІДБІЙ ТРИВОГИ! -> {old_item['location_title']} (ID: {a_id})")
+
+                    for a_id in new_alert_ids:
+                        new_item = current_state[a_id]
+                        badge = format_level_badge(new_item["alert_level"])
+                        print(f"   🚨 ОГОЛОШЕНО ТРИВОГУ! -> {new_item['location_title']} | {badge}")
+                        if new_item["threats"]:
+                            for t in new_item["threats"]:
+                                icon = "🔴" if t.get("level") == "red" else "🟡"
+                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
+                                print(f"     {icon} {desc}{msg}")
+
+                    for a_id in updated_alert_ids:
+                        if current_state[a_id] != previous_state[a_id]:
+                            item = current_state[a_id]
+                            badge = format_level_badge(item["alert_level"])
+                            print(f"   🔄 ОНОВЛЕННЯ ЗАТРОЗ -> {item['location_title']} | {badge}")
+                            if item["threats"]:
+                                for t in item["threats"]:
+                                    icon = "🔴" if t.get("level") == "red" else "🟡"
+                                    desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                    msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
+                                    print(f"     {icon} {desc}{msg}")
+
+                    if not current_state:
+                        print(f"   ✅ Усі тривоги скасовано. У локації '{location}' спокійно.")
+
+                    print("-" * 65)
+                    previous_state = current_state
+
+            time.sleep(interval)
+
+    except KeyboardInterrupt:
+        print("\n\n👋 Моніторинг зупинено користувачем. Бережіть себе!\n")

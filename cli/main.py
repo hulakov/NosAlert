@@ -12,7 +12,7 @@ except ImportError:
     pass
 
 from cli.parser import parse_args
-from cli.alerts_service import check_active_alerts, check_alerts_history
+from cli.alerts_service import check_active_alerts, check_alerts_history, monitor_alerts
 
 
 def main():
@@ -27,7 +27,9 @@ def main():
         print("Відкрийте файл .env та вкажіть: ALERTS_TOKEN=ваш_справжній_токен\n")
         sys.exit(1)
 
-    if args.history:
+    if args.monitor:
+        monitor_alerts(api_token, location=args.location, interval=args.interval, verbose=args.verbose)
+    elif args.history:
         check_alerts_history(api_token, location=args.location, period=args.period, limit=args.limit, verbose=args.verbose)
     else:
         check_active_alerts(api_token, location=args.location, verbose=args.verbose)
