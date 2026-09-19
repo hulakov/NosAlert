@@ -14,25 +14,8 @@ from .const import (
     CONF_API_TOKEN,
     CONF_LOCATIONS,
     DOMAIN,
-    LOCATION_UID_MAP,
+    REGIONS,
 )
-
-# List of popular locations for selection dropdown
-POPULAR_LOCATIONS = [
-    "м. Київ",
-    "Київська область",
-    "Чернігівська область",
-    "Миколаївська область",
-    "Харківська область",
-    "Одеська область",
-    "Львівська область",
-    "Дніпропетровська область",
-    "Запорізька область",
-    "Сумська область",
-    "Херсонська область",
-    "Донецька область",
-    "Луганська область",
-]
 
 
 async def validate_api_token(token: str) -> bool:
@@ -84,7 +67,7 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_API_TOKEN): str,
                 vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(
-                    {loc: loc for loc in POPULAR_LOCATIONS}
+                    {loc: loc for loc in REGIONS}
                 ),
             }
         )
@@ -143,7 +126,7 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
         schema = vol.Schema(
             {
                 vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(
-                    {loc: loc for loc in POPULAR_LOCATIONS}
+                    {loc: loc for loc in REGIONS}
                 ),
             }
         )

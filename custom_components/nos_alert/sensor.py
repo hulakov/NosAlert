@@ -16,7 +16,12 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-from .const import CONF_LOCATIONS, DOMAIN
+from .const import (
+    CONF_LOCATIONS,
+    DOMAIN,
+    get_location_display_name,
+    slugify_location,
+)
 from .coordinator import NosAlertDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -58,12 +63,14 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         """Initialize the color sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify(location)
+        self._slug = slugify_location(location)
+        display_name = get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_color"
+        self._attr_suggested_object = f"nosalert_{self._slug}_color"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
-            name=f"NosAlert {location}",
+            name=f"NosAlert {display_name}",
             manufacturer="alerts.in.ua",
             model="Air Raid Alert Regional Monitor",
         )
@@ -113,12 +120,14 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
         """Initialize the threats summary sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify(location)
+        self._slug = slugify_location(location)
+        display_name = get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_active_threats"
+        self._attr_suggested_object = f"nosalert_{self._slug}_active_threats"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
-            name=f"NosAlert {location}",
+            name=f"NosAlert {display_name}",
             manufacturer="alerts.in.ua",
             model="Air Raid Alert Regional Monitor",
         )
@@ -167,12 +176,14 @@ class NosAlertThreatCountSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator]
         """Initialize threat count sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify(location)
+        self._slug = slugify_location(location)
+        display_name = get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_threat_count"
+        self._attr_suggested_object = f"nosalert_{self._slug}_threat_count"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
-            name=f"NosAlert {location}",
+            name=f"NosAlert {display_name}",
             manufacturer="alerts.in.ua",
             model="Air Raid Alert Regional Monitor",
         )
@@ -199,13 +210,15 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
         """Initialize the start time sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify(location)
+        self._slug = slugify_location(location)
+        display_name = get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_start_time"
+        self._attr_suggested_object = f"nosalert_{self._slug}_start_time"
         self._attr_icon = "mdi:clock-alert-outline"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
-            name=f"NosAlert {location}",
+            name=f"NosAlert {display_name}",
             manufacturer="alerts.in.ua",
             model="Air Raid Alert Regional Monitor",
         )

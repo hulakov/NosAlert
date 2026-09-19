@@ -4,53 +4,15 @@ import time
 import urllib.request
 from datetime import datetime
 
-# Mapping of location names (lowercased) to official Location UIDs
-LOCATION_UID_MAP = {
-    "хмельницька область": "3",
-    "вінницька область": "4",
-    "рівненська область": "5",
-    "волинська область": "8",
-    "дніпропетровська область": "9",
-    "житомирська область": "10",
-    "закарпатська область": "11",
-    "запорізька область": "12",
-    "івано-франківська область": "13",
-    "київська область": "14",
-    "кіровоградська область": "15",
-    "луганська область": "16",
-    "миколаївська область": "17",
-    "одеська область": "18",
-    "полтавська область": "19",
-    "сумська область": "20",
-    "тернопільська область": "21",
-    "харківська область": "22",
-    "херсонська область": "23",
-    "черкаська область": "24",
-    "чернігівська область": "25",
-    "чернівецька область": "26",
-    "львівська область": "27",
-    "донецька область": "28",
-    "автономна республіка крим": "29",
-    "крим": "29",
-    "м. севастополь": "30",
-    "севастополь": "30",
-    "м. київ": "31",
-    "київ": "31",
-}
+import os
+import sys
 
-# Mapping of threat types to human-readable Ukrainian descriptions for display
-THREAT_DESCRIPTIONS = {
-    "tactic_aircraft_activity": "✈️ Активність тактичної авіації",
-    "strategic_aircraft_activity": "🛫 Зліт стратегічної авіації",
-    "mig31k_departure": "🚀 Зліт МіГ-31К (загроза 'Кинджал')",
-    "ballistic_missiles": "💥 Загроза балістичного озброєння",
-    "cruise_missiles": "🚀 Загроза крилатих ракет",
-    "unspecified_missiles": "🚀 Ракета в напрямку локації",
-    "drones": "🛸 БпЛА / Дрони (Шахеди)",
-    "guided_aerial_bombs": "💣 Загроза КАБ/ФАБ",
-    "air_defense": "🛡️ Робота ППО",
-    "unknown": "❓ Невизначена загроза",
-}
+# Ensure custom_components/nos_alert directory is in path to import constants without HA dependencies
+_const_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "custom_components", "nos_alert"))
+if _const_dir not in sys.path:
+    sys.path.insert(0, _const_dir)
+
+from const import LOCATION_UID_MAP, THREAT_DESCRIPTIONS
 
 
 def resolve_location_uid(location_input: str) -> str:
