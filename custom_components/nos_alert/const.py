@@ -3,9 +3,9 @@
 import re
 
 try:
-    from .locations import LOCATIONS
+    from .locations import LOCATIONS, LocationType
 except ImportError:
-    from locations import LOCATIONS
+    from locations import LOCATIONS, LocationType
 
 DOMAIN = "nos_alert"
 DEFAULT_SCAN_INTERVAL = 7  # Scan interval in seconds (respects API soft limit of 8-10 req/min)
@@ -16,21 +16,25 @@ CONF_LOCATIONS = "locations"
 API_ACTIVE_ALERTS_URL = "https://api.alerts.in.ua/v1/alerts/active.json"
 
 def iter_all_locations():
-    """Flatten hierarchical LOCATIONS into individual location dicts (oblast, district, hromada)."""
+    """Flatten hierarchical LOCATIONS into individual location dicts (oblast, district, hromada).
+
+    Injects 'type' field based on nesting level for backward compatibility,
+    since districts and hromadas don't store 'type' explicitly in the hierarchy.
+    """
     for loc in LOCATIONS:
-        yield loc
+        yield loc  # has 'type' field (Область / Місто з спеціальним статусом)
         for district in loc.get("districts", []):
-            yield district
+            yield {**district, "type": LocationType.RAION}
             for hromada in district.get("hromadas", []):
-                yield hromada
+                yield {**hromada, "type": LocationType.HROMADA}
         for hromada in loc.get("hromadas", []):  # oblast-level hromadas (edge case)
-            yield hromada
+            yield {**hromada, "type": LocationType.HROMADA}
 
 
 # Dynamic list of all Oblasts + Crimea + Kyiv + Sevastopol for HA configuration dropdowns
 REGIONS: list[str] = [
     loc["name"] for loc in LOCATIONS
-    if loc["type"] in ("Область", "Місто з спеціальним статусом")
+    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
 ]
 
 # Mapping of threat types to human-readable Ukrainian descriptions
@@ -49,7 +53,7 @@ THREAT_DESCRIPTIONS = {
 
 # --- Dynamic dictionary construction from official LOCATIONS database ---
 
-LOCATIONS_BY_UID: dict[str, dict[str, str]] = {loc["uid"]: loc for loc in iter_all_locations()}
+LOCATIONS_BY_UID: dict[str, dict[str, str]] = {str(loc["uid"]): loc for loc in iter_all_locations()}
 
 LOCATION_UID_MAP: dict[str, str] = {}
 LOCATION_SLUG_MAP: dict[str, str] = {}
@@ -68,7 +72,7 @@ def _slugify_raw(text: str) -> str:
 
 
 for _loc in iter_all_locations():
-    _uid = _loc["uid"]
+    _uid = str(_loc["uid"])
     _name = _loc["name"]
     _name_en = _loc["name_en"]
     _ltype = _loc["type"]
@@ -85,7 +89,7 @@ for _loc in iter_all_locations():
     LOCATION_SLUG_MAP[_name_en.lower()] = _slug
 
     # 3. Display name mapping
-    _display = _name_en if _ltype == "Місто з спеціальним статусом" else _name
+    _display = _name_en if _ltype == LocationType.SPECIAL_CITY else _name
     LOCATION_DISPLAY_NAME_MAP[_uid] = _display
     LOCATION_DISPLAY_NAME_MAP[_name.lower()] = _display
     LOCATION_DISPLAY_NAME_MAP[_name_en.lower()] = _display
