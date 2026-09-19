@@ -106,10 +106,6 @@ def get_location_display_name(location_input: str) -> str:
     uid = resolve_location_uid(location_input)
     if uid in LOCATIONS_BY_UID:
         return LOCATIONS_BY_UID[uid]["display_name"]
-    
-    if str(location_input).strip().lower() == "крим":
-        return "Crimea"
-    
     # Fallback
     loc_clean = str(location_input).strip()
     without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
@@ -122,8 +118,5 @@ def slugify_location(location: str) -> str:
         return LOCATIONS_BY_UID[uid]["slug"]
     
     loc_clean = str(location).strip()
-    if loc_clean.lower() == "крим":
-        return "crimea"
-
     without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
     return _slugify_raw(without_m if without_m else loc_clean)
