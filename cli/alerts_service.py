@@ -129,7 +129,7 @@ def check_active_alerts(api_token: str, location: str, verbose: bool = False):
                     t_level = threat.get("level", "yellow")
                     t_msg = threat.get("source_message", "")
                     
-                    type_str = THREAT_DESCRIPTIONS.get(t_type, f"Загроза: {t_type}")
+                    type_str = THREAT_DESCRIPTIONS.get(t_type, f"❓ {t_type}")
                     level_icon = "🔴" if t_level == "red" else "🟡"
                     
                     msg_str = f" ({t_msg})" if t_msg else ""
@@ -256,7 +256,7 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
                         if item["threats"]:
                             for t in item["threats"]:
                                 icon = "🔴" if t.get("level") == "red" else "🟡"
-                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), f"❓ {t.get('threat_type')}")
                                 msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
                                 print(f"     {icon} {desc}{msg}")
                 previous_state = current_state
@@ -279,7 +279,7 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
                         if new_item["threats"]:
                             for t in new_item["threats"]:
                                 icon = "🔴" if t.get("level") == "red" else "🟡"
-                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), f"❓ {t.get('threat_type')}")
                                 msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
                                 print(f"     {icon} {desc}{msg}")
 
@@ -291,7 +291,7 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
                             if item["threats"]:
                                 for t in item["threats"]:
                                     icon = "🔴" if t.get("level") == "red" else "🟡"
-                                    desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), t.get("threat_type"))
+                                    desc = THREAT_DESCRIPTIONS.get(t.get("threat_type"), f"❓ {t.get('threat_type')}")
                                     msg = f" ({t.get('source_message')})" if t.get("source_message") else ""
                                     print(f"     {icon} {desc}{msg}")
 

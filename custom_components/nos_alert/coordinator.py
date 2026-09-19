@@ -120,7 +120,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             for alert in target_alerts:
                 for threat in alert.get("threats") or []:
                     t_type = threat.get("threat_type", "unknown")
-                    t_desc = THREAT_DESCRIPTIONS.get(t_type, t_type)
+                    t_desc = THREAT_DESCRIPTIONS.get(t_type, f"❓ {t_type}")
                     threat_item = {
                         "threat_type": t_type,
                         "description": t_desc,
