@@ -15,10 +15,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
 from .const import CONF_LOCATIONS, DOMAIN
-from .location_helpers import (
-    get_location_display_name,
-    slugify_location,
-)
+from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,8 +53,8 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
         """Initialize the binary sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
+        self._slug = location_registry.slugify_location(location)
+        display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_alert"
         self._attr_suggested_object = f"nosalert_{self._slug}_alert"

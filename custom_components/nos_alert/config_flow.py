@@ -13,6 +13,9 @@ from homeassistant.helpers.selector import (
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
 )
 
 from .const import (
@@ -21,16 +24,16 @@ from .const import (
     CONF_LOCATIONS,
     DOMAIN,
 )
-from .locations import LOCATIONS, LocationType
-from .location_helpers import slugify_location, format_location_name
+from .const import LocationType
+from .location_registry import location_registry
 
 REGION_OPTIONS = [
     SelectOptionDict(
-        value=slugify_location(loc["name_en"]),
-        label=format_location_name(loc["name"], loc["type"])
+        value=loc.slug,
+        label=loc.display_name
     )
-    for loc in LOCATIONS
-    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
+    for loc in location_registry.all_locations.values()
+    if loc.type in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
 ]
 
 
@@ -81,7 +84,9 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_API_TOKEN): str,
+                vol.Required(CONF_API_TOKEN): TextSelector(
+                    TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                ),
                 vol.Required(CONF_LOCATIONS, default=["kyiv"]): SelectSelector(
                     SelectSelectorConfig(
                         options=REGION_OPTIONS,

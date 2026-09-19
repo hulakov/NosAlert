@@ -17,10 +17,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
 from .const import CONF_LOCATIONS, DOMAIN
-from .location_helpers import (
-    get_location_display_name,
-    slugify_location,
-)
+from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,8 +59,8 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         """Initialize the color sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
+        self._slug = location_registry.slugify_location(location)
+        display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_color"
         self._attr_suggested_object = f"nosalert_{self._slug}_color"
@@ -119,8 +116,8 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
         """Initialize the threats summary sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
+        self._slug = location_registry.slugify_location(location)
+        display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_active_threats"
         self._attr_suggested_object = f"nosalert_{self._slug}_active_threats"
@@ -174,8 +171,8 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
         """Initialize the start time sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
+        self._slug = location_registry.slugify_location(location)
+        display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_start_time"
         self._attr_suggested_object = f"nosalert_{self._slug}_start_time"
@@ -215,8 +212,8 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
         """Initialize the affected regions sensor."""
         super().__init__(coordinator)
         self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
+        self._slug = location_registry.slugify_location(location)
+        display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_affected_regions"
         self._attr_suggested_object = f"nosalert_{self._slug}_affected_regions"

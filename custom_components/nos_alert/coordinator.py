@@ -14,7 +14,7 @@ from .const import (
     DOMAIN,
     THREAT_DESCRIPTIONS,
 )
-from .location_helpers import LOCATIONS_BY_UID, resolve_location_uid
+from .location_registry import location_registry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         result: dict[str, Any] = {}
 
         for loc in self.locations:
-            loc_uid = resolve_location_uid(loc)
+            loc_uid = location_registry.resolve_location_uid(loc)
 
             # Filter alerts for specified location.
             # We use LOCATIONS_BY_UID because the alerts.in.ua API has a bug where
@@ -84,7 +84,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if str(a.get("location_uid", "")) == loc
                 or str(a.get("location_uid", "")) == loc_uid
                 or str(a.get("location_oblast_uid", "")) == loc_uid
-                or (str(a.get("location_uid", "")) in LOCATIONS_BY_UID and LOCATIONS_BY_UID[str(a.get("location_uid", ""))].get("parent_oblast_uid") == loc_uid)
+                or (location_registry.get(str(a.get("location_uid", ""))) and location_registry.get(str(a.get("location_uid", ""))).parent_location_uid == loc_uid)
             ]
 
             if not target_alerts:
@@ -136,9 +136,9 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             affected_locations = []
             for alert in target_alerts:
                 alert_loc_uid = str(alert.get("location_uid", ""))
-                if alert_loc_uid in LOCATIONS_BY_UID:
-                    # Prefer the clean 'name_without_m' if available, otherwise 'name'
-                    loc_name = LOCATIONS_BY_UID[alert_loc_uid].get("name_without_m") or LOCATIONS_BY_UID[alert_loc_uid].get("name")
+                alert_loc = location_registry.get(alert_loc_uid)
+                if alert_loc:
+                    loc_name = alert_loc.name
                     if loc_name:
                         alert_level = alert.get("alert_level", "red")
                         circle = "🔴" if alert_level == "red" else "🟡"

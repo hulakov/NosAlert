@@ -6,7 +6,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_API_TOKEN, CONF_LOCATIONS, DOMAIN
-from .location_helpers import LOCATIONS_BY_UID, resolve_location_uid
+from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,9 +59,10 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         new_locations = []
         
         for old_val in old_locations:
-            uid = resolve_location_uid(old_val)
-            if uid in LOCATIONS_BY_UID:
-                new_locations.append(LOCATIONS_BY_UID[uid]["slug"])
+            uid = location_registry.resolve_location_uid(old_val)
+            loc = location_registry.get(uid)
+            if loc:
+                new_locations.append(loc.slug)
             else:
                 new_locations.append(old_val)
         

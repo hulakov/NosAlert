@@ -1,7 +1,16 @@
-"""Constants for the NosAlert Home Assistant integration."""
+from enum import StrEnum
 
 DOMAIN = "nos_alert"
 DEFAULT_SCAN_INTERVAL = 10  # Scan interval in seconds (respects API soft limit of 8-10 req/min)
+
+class LocationType(StrEnum):
+    """Types of locations in Ukraine."""
+    SPECIAL_CITY = "Місто з спеціальним статусом"
+    AUTONOMOUS_REPUBLIC = "Автономна Республіка"
+    OBLAST = "Область"
+    RAION = "Район"
+    HROMADA = "Громада"
+
 
 CONF_API_TOKEN = "api_token"
 CONF_LOCATIONS = "locations"
