@@ -19,12 +19,12 @@ from .const import (
     CONF_API_TOKEN,
     CONF_LOCATIONS,
     DOMAIN,
-    LOCATION_SLUG_MAP,
 )
 from .locations import LOCATIONS, LocationType
+from .location_helpers import slugify_location
 
 REGION_OPTIONS = [
-    LOCATION_SLUG_MAP[str(loc["uid"])] for loc in LOCATIONS
+    slugify_location(loc["name_en"]) for loc in LOCATIONS
     if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
 ]
 
