@@ -75,6 +75,21 @@ def format_location_name(name: str, loc_type: str) -> str:
         
     return clean_name
 
+def generate_legacy_slug(name_en: str, loc_type: str) -> str:
+    """Generate slug with legacy suffixes for backward compatibility."""
+    slug = _slugify_raw(name_en)
+    
+    if loc_type == LocationType.OBLAST:
+        slug += "_oblast"
+    elif loc_type == LocationType.RAION:
+        slug += "_raion"
+    elif loc_type == LocationType.HROMADA:
+        slug += "_hromada"
+    elif loc_type == LocationType.AUTONOMOUS_REPUBLIC:
+        slug = "autonomous_republic_of_crimea"
+        
+    return slug
+
 class NormalizedLocation(TypedDict):
     """Normalized location data used internally for lookups."""
     uid: str
@@ -92,18 +107,7 @@ for _loc in iter_all_locations():
     _uid = str(_loc["uid"])
     _name = _loc["name"]
     _name_en = _loc["name_en"]
-    _slug = _slugify_raw(_name_en)
-    
-    # Restore legacy suffixes for slugs to maintain backward compatibility with existing unique_ids
-    if _loc.get("type") == LocationType.OBLAST:
-        _slug += "_oblast"
-    elif _loc.get("type") == LocationType.RAION:
-        _slug += "_raion"
-    elif _loc.get("type") == LocationType.HROMADA:
-        _slug += "_hromada"
-    elif _loc.get("type") == LocationType.AUTONOMOUS_REPUBLIC:
-        # Legacy slug for Crimea
-        _slug = "autonomous_republic_of_crimea"
+    _slug = generate_legacy_slug(_name_en, _loc.get("type"))
     
     _clean_name = _name.strip()
     _display_name = format_location_name(_name, _loc.get("type"))
