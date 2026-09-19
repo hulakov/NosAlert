@@ -76,7 +76,7 @@ for _loc in iter_all_locations():
         "name_en": _name_en,
         "slug": _slug,
         "parent_oblast_uid": str(_loc.get("parent_oblast_uid")),
-        "display_name": _name_en,
+        "display_name": re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip(),
         "name_without_m": re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip(),
     }
 
