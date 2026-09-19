@@ -4,6 +4,11 @@
 
 A custom integration for **Home Assistant** that connects to the official REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) to provide real-time information about air raid alerts and threats across regions of Ukraine.
 
+<p align="center">
+  <img src="docs/images/ha_sensors.png" alt="NosAlert Sensors in Home Assistant" width="400">
+  <img src="docs/images/ha_devices.png" alt="NosAlert Devices in Home Assistant" width="600">
+</p>
+
 ---
 
 ## ✨ Features
@@ -55,8 +60,8 @@ For each selected region, the integration creates the following set of entities:
 | `binary_sensor.<region>_air_raid_alert` | Binary Sensor | `safety` | **Alert Status** (`Unsafe` / `Safe`) |
 | `sensor.<region>_color` | Sensor | `enum` | **Alert Level** (`Air Raid Alert! (Red)`, `Partial Alert (Yellow)`, `Clear`) |
 | `sensor.<region>_active_threats` | Sensor | — | **Active Threats** (e.g.: *"Shahed UAVs, Cruise Missiles"* or *"Clear"*) |
-| `sensor.<region>_threat_count` | Sensor | `measurement` | **Threat Count** (numeric value: `0`, `1`, `2`...) |
 | `sensor.<region>_start_time` | Sensor | `timestamp` | **Alert Start Time** (ISO 8601 date/time) |
+| `sensor.<region>_affected_regions` | Sensor | — | **Affected Regions** (list of districts/hromadas under alert within the oblast) |
 
 Additionally, the entity attributes (`extra_state_attributes["threats_detail"]`) store a full array of objects containing detailed threat data and source messages from the API.
 

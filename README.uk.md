@@ -4,6 +4,11 @@
 
 Кастомна інтеграція для **Home Assistant**, яка підключається до офіційного REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) та надає оперативну інформацію про повітряні тривоги та загрози по регіонах України.
 
+<p align="center">
+  <img src="docs/images/ha_sensors.png" alt="Сенсори NosAlert в Home Assistant" width="400">
+  <img src="docs/images/ha_devices.png" alt="Пристрої NosAlert в Home Assistant" width="600">
+</p>
+
 ---
 
 ## ✨ Особливості
@@ -52,11 +57,11 @@
 
 | Сутність | Тип | Device Class | Опис / Можливі стани |
 |---|---|---|---|
-| `binary_sensor.<region>_air_raid_alert` | Binary Sensor | `safety` | **Статус тривоги** (`Unsafe` / `Safe`) |
+| `binary_sensor.<region>_air_raid_alert` | Binary Sensor | `safety` | **Статус тривоги** (`Небезпечно` / `Безпечно`) |
 | `sensor.<region>_color` | Sensor | `enum` | **Рівень тривоги** (`Повітряна тривога! (Червоний)`, `Часткова тривога (Жовтий)`, `Спокійно`) |
 | `sensor.<region>_active_threats` | Sensor | — | **Активні загрози** (напр.: *"Шахеди/БпЛА, Крилаті ракети"* або *"Відсутні"*) |
-| `sensor.<region>_threat_count` | Sensor | `measurement` | **Кількість загроз** (числове значення: `0`, `1`, `2`...) |
 | `sensor.<region>_start_time` | Sensor | `timestamp` | **Час початку тривоги** (ISO 8601 дата/час) |
+| `sensor.<region>_affected_regions` | Sensor | — | **Регіони під тривогою** (перелік районів/громад під тривогою в межах області) |
 
 Додатково в атрибутах сутності (`extra_state_attributes["threats_detail"]`) зберігається повний масив об'єктів з деталями та джерелами повідомлень від API.
 
