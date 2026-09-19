@@ -96,6 +96,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     "threats_count": 0,
                     "threats": [],
                     "source_messages": [],
+                    "affected_locations": [],
                 }
                 continue
 
@@ -131,6 +132,19 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     if threat.get("source_message"):
                         source_messages.append(threat.get("source_message"))
 
+            # Collect affected locations
+            affected_locations = []
+            for alert in target_alerts:
+                alert_loc_uid = str(alert.get("location_uid", ""))
+                if alert_loc_uid in LOCATIONS_BY_UID:
+                    # Prefer the clean 'name_without_m' if available, otherwise 'name'
+                    loc_name = LOCATIONS_BY_UID[alert_loc_uid].get("name_without_m") or LOCATIONS_BY_UID[alert_loc_uid].get("name")
+                    if loc_name and loc_name not in affected_locations:
+                        affected_locations.append(loc_name)
+            
+            # Sort them alphabetically for better readability
+            affected_locations.sort()
+
             result[loc] = {
                 "alert_level": overall_level,
                 "is_active": True,
@@ -139,6 +153,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "threats_count": len(all_threats),
                 "threats": all_threats,
                 "source_messages": source_messages,
+                "affected_locations": affected_locations,
             }
 
         return result

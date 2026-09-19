@@ -46,6 +46,9 @@
       "threat_count": {
         "name": "Кількість загроз"
       },
+      "affected_regions": {
+        "name": "Райони під тривогою"
+      },
       "alert_start_time": {
         "name": "Час початку тривоги"
       }

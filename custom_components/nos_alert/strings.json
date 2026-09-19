@@ -46,6 +46,9 @@
       "threat_count": {
         "name": "Threat Count"
       },
+      "affected_regions": {
+        "name": "Affected Regions"
+      },
       "alert_start_time": {
         "name": "Alert Start Time"
       }

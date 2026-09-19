@@ -41,6 +41,7 @@ async def async_setup_entry(
         entities.append(NosAlertColorSensor(coordinator, loc))
         entities.append(NosAlertThreatsSensor(coordinator, loc))
         entities.append(NosAlertThreatCountSensor(coordinator, loc))
+        entities.append(NosAlertAffectedRegionsSensor(coordinator, loc))
         entities.append(NosAlertStartTimeSensor(coordinator, loc))
 
     async_add_entities(entities)
@@ -233,3 +234,44 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
             return datetime.fromisoformat(str(started_at).replace("Z", "+00:00"))
         except Exception:
             return None
+
+
+class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
+    """Sensor returning a readable string of affected regions within the monitored area."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "affected_regions"
+    _attr_icon = "mdi:map-marker-multiple-outline"
+
+    def __init__(
+        self,
+        coordinator: NosAlertDataUpdateCoordinator,
+        location: str,
+    ) -> None:
+        """Initialize the affected regions sensor."""
+        super().__init__(coordinator)
+        self.location = location
+        self._slug = slugify_location(location)
+        display_name = get_location_display_name(location)
+
+        self._attr_unique_id = f"nos_alert_{self._slug}_affected_regions"
+        self._attr_suggested_object = f"nosalert_{self._slug}_affected_regions"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
+            name=f"NosAlert {display_name}",
+            manufacturer="alerts.in.ua",
+            model="Air Raid Alert Regional Monitor",
+        )
+
+    @property
+    def native_value(self) -> str:
+        """Return human readable affected regions string."""
+        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        if not loc_data.get("is_active"):
+            return "Відсутні"
+
+        affected = loc_data.get("affected_locations", [])
+        if affected:
+            return ", ".join(affected)
+
+        return "Вся область"
