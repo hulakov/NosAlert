@@ -62,6 +62,21 @@ def _slugify_raw(text: str) -> str:
     normalized = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8")
     return re.sub(r"[^a-z0-9]+", "_", normalized.lower()).strip("_")
 
+def format_location_name(name: str, loc_type: str) -> str:
+    """Format location name with appropriate prefixes/suffixes for display."""
+    clean_name = re.sub(r"^м\.\s*", "", name, flags=re.IGNORECASE).strip()
+    
+    if loc_type == LocationType.OBLAST:
+        return f"{clean_name} область"
+    elif loc_type == LocationType.AUTONOMOUS_REPUBLIC:
+        if clean_name.lower() == "крим":
+            return f"Автономна Республіка {clean_name}"
+        return clean_name
+    elif loc_type == LocationType.SPECIAL_CITY:
+        return f"місто {clean_name}"
+        
+    return clean_name
+
 # Build the main map once at module level
 LOCATIONS_BY_UID: dict[str, dict[str, Any]] = {}
 
@@ -83,7 +98,7 @@ for _loc in iter_all_locations():
         _slug = "autonomous_republic_of_crimea"
     
     _clean_name = re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip()
-    _display_name = _clean_name + (" область" if _loc.get("type") == LocationType.OBLAST else "")
+    _display_name = format_location_name(_name, _loc.get("type"))
     
     LOCATIONS_BY_UID[_uid] = {
         "uid": _uid,

@@ -22,12 +22,12 @@ from .const import (
     DOMAIN,
 )
 from .locations import LOCATIONS, LocationType
-from .location_helpers import slugify_location
+from .location_helpers import slugify_location, format_location_name
 
 REGION_OPTIONS = [
     SelectOptionDict(
         value=slugify_location(loc["name_en"]),
-        label=loc["name"].replace("м. ", "") + (" область" if loc["type"] == LocationType.OBLAST else "")
+        label=format_location_name(loc["name"], loc["type"])
     )
     for loc in LOCATIONS
     if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
