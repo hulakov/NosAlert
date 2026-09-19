@@ -15,6 +15,18 @@ CONF_LOCATIONS = "locations"
 
 API_ACTIVE_ALERTS_URL = "https://api.alerts.in.ua/v1/alerts/active.json"
 
+def iter_all_locations():
+    """Flatten hierarchical LOCATIONS into individual location dicts (oblast, district, hromada)."""
+    for loc in LOCATIONS:
+        yield loc
+        for district in loc.get("districts", []):
+            yield district
+            for hromada in district.get("hromadas", []):
+                yield hromada
+        for hromada in loc.get("hromadas", []):  # oblast-level hromadas (edge case)
+            yield hromada
+
+
 # Dynamic list of all Oblasts + Crimea + Kyiv + Sevastopol for HA configuration dropdowns
 REGIONS: list[str] = [
     loc["name"] for loc in LOCATIONS
@@ -37,7 +49,7 @@ THREAT_DESCRIPTIONS = {
 
 # --- Dynamic dictionary construction from official LOCATIONS database ---
 
-LOCATIONS_BY_UID: dict[str, dict[str, str]] = {loc["uid"]: loc for loc in LOCATIONS}
+LOCATIONS_BY_UID: dict[str, dict[str, str]] = {loc["uid"]: loc for loc in iter_all_locations()}
 
 LOCATION_UID_MAP: dict[str, str] = {}
 LOCATION_SLUG_MAP: dict[str, str] = {}
@@ -55,7 +67,7 @@ def _slugify_raw(text: str) -> str:
         return re.sub(r"[^a-z0-9]+", "_", normalized.lower()).strip("_")
 
 
-for _loc in LOCATIONS:
+for _loc in iter_all_locations():
     _uid = _loc["uid"]
     _name = _loc["name"]
     _name_en = _loc["name_en"]
