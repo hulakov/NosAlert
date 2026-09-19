@@ -64,7 +64,7 @@ def _slugify_raw(text: str) -> str:
 
 def format_location_name(name: str, loc_type: str) -> str:
     """Format location name with appropriate prefixes/suffixes for display."""
-    clean_name = re.sub(r"^м\.\s*", "", name, flags=re.IGNORECASE).strip()
+    clean_name = name.strip()
     
     if loc_type == LocationType.OBLAST:
         return f"{clean_name} область"
@@ -95,7 +95,7 @@ for _loc in iter_all_locations():
         # Legacy slug for Crimea
         _slug = "autonomous_republic_of_crimea"
     
-    _clean_name = re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip()
+    _clean_name = _name.strip()
     _display_name = format_location_name(_name, _loc.get("type"))
     
     LOCATIONS_BY_UID[_uid] = {
@@ -134,10 +134,7 @@ def get_location_display_name(location_input: str) -> str:
     if uid in LOCATIONS_BY_UID:
         return LOCATIONS_BY_UID[uid]["display_name"]
     # Fallback
-    loc_clean = str(location_input).strip()
-    without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
-    return without_m if without_m else loc_clean
-
+    return str(location_input).strip()
 def slugify_location(location: str) -> str:
     """Convert location name or UID to a clean, standardized English slug for entity IDs."""
     uid = resolve_location_uid(location)
@@ -145,5 +142,4 @@ def slugify_location(location: str) -> str:
         return LOCATIONS_BY_UID[uid]["slug"]
     
     loc_clean = str(location).strip()
-    without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
-    return _slugify_raw(without_m if without_m else loc_clean)
+    return _slugify_raw(loc_clean)

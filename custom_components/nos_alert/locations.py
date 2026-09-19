@@ -14,13 +14,13 @@ except ImportError:
 LOCATIONS: list[Location] = [
     {
         "uid": 31,
-        "name": 'м. Київ',
+        "name": 'Київ',
         "type": LocationType.SPECIAL_CITY,
         "name_en": 'Kyiv',
     },
     {
         "uid": 30,
-        "name": 'м. Севастополь',
+        "name": 'Севастополь',
         "type": LocationType.SPECIAL_CITY,
         "name_en": 'Sevastopol',
     },
@@ -37,7 +37,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 255,
-                        "name": 'м. Володимир та Володимирська',
+                        "name": 'Володимир та Володимирська',
                         "name_en": 'Volodymyr and Volodymyrska',
                     },
                     {
@@ -62,7 +62,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 261,
-                        "name": 'м. Нововолинськ та Нововолинська',
+                        "name": 'Нововолинськ та Нововолинська',
                         "name_en": 'Novovolynsk and Novovolynska',
                     },
                     {
@@ -184,7 +184,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 241,
-                        "name": 'м. Ковель та Ковельська',
+                        "name": 'Ковель та Ковельська',
                         "name_en": 'Kovel and Kovelska',
                     },
                     {
@@ -204,7 +204,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 245,
-                        "name": 'м. Любомиль та Любомльська',
+                        "name": 'Любомиль та Любомльська',
                         "name_en": 'Liubomyl and Liubomlska',
                     },
                     {
@@ -249,7 +249,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 254,
-                        "name": 'м. Шацьк та Шацька',
+                        "name": 'Шацьк та Шацька',
                         "name_en": 'Shatsk and Shatska',
                     },
                 ],
@@ -301,7 +301,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 225,
-                        "name": 'м. Луцьк та Луцька',
+                        "name": 'Луцьк та Луцька',
                         "name_en": 'Lutsk and Lutska',
                     },
                     {
@@ -361,7 +361,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 155,
-                        "name": 'м. Вінниця та Вінницька',
+                        "name": 'Вінниця та Вінницька',
                         "name_en": 'Vinnytsia and Vinnytska',
                     },
                     {
@@ -468,7 +468,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 191,
-                        "name": 'м. Ладижин та Ладижинська',
+                        "name": 'Ладижин та Ладижинська',
                         "name_en": 'Ladyzhyn and Ladyzhynska',
                     },
                     {
@@ -525,7 +525,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 179,
-                        "name": 'м. Жмеринка та Жмеринська',
+                        "name": 'Жмеринка та Жмеринська',
                         "name_en": 'Zhmerynka and Zhmerynska',
                     },
                     {
@@ -572,7 +572,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 172,
-                        "name": 'м. Могилів-Подільський та Могилів-Подільська',
+                        "name": 'Могилів-Подільський та Могилів-Подільська',
                         "name_en": 'Mohyliv-Podilskyi and Mohyliv-Podilska',
                     },
                     {
@@ -671,7 +671,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 212,
-                        "name": 'м. Козятин та Козятинська',
+                        "name": 'Козятин та Козятинська',
                         "name_en": 'Koziatyn and Koziatynska',
                     },
                     {
@@ -691,7 +691,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 216,
-                        "name": 'м. Хмільник та Хмільницька',
+                        "name": 'Хмільник та Хмільницька',
                         "name_en": 'Khmilnyk and Khmilnytska',
                     },
                     {
@@ -716,7 +716,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 332,
-                        "name": 'м. Дніпро та Дніпровська',
+                        "name": 'Дніпро та Дніпровська',
                         "name_en": 'Dnipro and Dniprovska',
                     },
                     {
@@ -828,12 +828,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 297,
-                        "name": 'м. Вільногірськ та Вільногірська',
+                        "name": 'Вільногірськ та Вільногірська',
                         "name_en": 'Vilnohirsk and Vilnohirska',
                     },
                     {
                         "uid": 298,
-                        "name": 'м. Жовті Води та Жовтоводська',
+                        "name": 'Жовті Води та Жовтоводська',
                         "name_en": 'Zhovti Vody and Zhovtovodska',
                     },
                     {
@@ -843,7 +843,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 300,
-                        "name": 'м. Кам’янське та Кам’янська',
+                        "name": 'Кам’янське та Кам’янська',
                         "name_en": 'Kamyanske and Kamyanska',
                     },
                     {
@@ -915,7 +915,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 279,
-                        "name": 'м. Кривий Ріг та Криворізька',
+                        "name": 'Кривий Ріг та Криворізька',
                         "name_en": 'Kryvyi Rih and Kryvorizka',
                     },
                     {
@@ -957,7 +957,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 349,
-                        "name": 'м. Марганець та Марганецька',
+                        "name": 'Марганець та Марганецька',
                         "name_en": 'Marhanets and Marhanetska',
                     },
                     {
@@ -967,7 +967,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 351,
-                        "name": 'м. Нікополь та Нікопольська',
+                        "name": 'Нікополь та Нікопольська',
                         "name_en": 'Nikopol and Nikopolska',
                     },
                     {
@@ -977,7 +977,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 354,
-                        "name": 'м. Покров та Покровська',
+                        "name": 'Покров та Покровська',
                         "name_en": 'Pokrov and Pokrovska',
                     },
                     {
@@ -1019,12 +1019,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 289,
-                        "name": 'м. Павлоград та Павлоградська',
+                        "name": 'Павлоград та Павлоградська',
                         "name_en": 'Pavlohrad and Pavlohradska',
                     },
                     {
                         "uid": 290,
-                        "name": 'м. Тернівка та Тернівська',
+                        "name": 'Тернівка та Тернівська',
                         "name_en": 'Ternivka and Ternivska',
                     },
                     {
@@ -1071,7 +1071,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 327,
-                        "name": 'м. Самар та Самарівська',
+                        "name": 'Самар та Самарівська',
                         "name_en": 'Samar and Samarivska',
                     },
                     {
@@ -1158,7 +1158,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 320,
-                        "name": 'м. Синельникове та Синельниківська',
+                        "name": 'Синельникове та Синельниківська',
                         "name_en": 'Synelnykove and Synelnykivska',
                     },
                     {
@@ -1178,7 +1178,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 315,
-                        "name": 'м. Шахтарськ та Шахтарська',
+                        "name": 'Шахтарськ та Шахтарська',
                         "name_en": 'Shakhtarsk and Shakhtarska',
                     },
                     {
@@ -1297,7 +1297,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 415,
-                        "name": 'м. Горлівка та Горлівська міська громада',
+                        "name": 'Горлівка та Горлівська міська громада',
                         "name_en": 'Horlivka and Horlivska miska hromada',
                     },
                     {
@@ -1332,7 +1332,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 417,
-                        "name": 'м. Єнакієве та Єнакієвська міська громада',
+                        "name": 'Єнакієве та Єнакієвська міська громада',
                         "name_en": 'Yenakiieve and Yenakiievska miska hromada',
                     },
                 ],
@@ -1354,7 +1354,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 406,
-                        "name": 'м. Макіївка та Макіївська міська громада',
+                        "name": 'Макіївка та Макіївська міська громада',
                         "name_en": 'Makiivka and Makiivska miska hromada',
                     },
                     {
@@ -1428,7 +1428,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 375,
-                        "name": 'м. Краматорськ та Краматорська',
+                        "name": 'Краматорськ та Краматорська',
                         "name_en": 'Kramatorsk and Kramatorska',
                     },
                     {
@@ -1458,7 +1458,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 381,
-                        "name": "м. Слов'янськ та Слов'янська",
+                        "name": "Слов'янськ та Слов'янська",
                         "name_en": 'Sloviansk and Slovianska',
                     },
                     {
@@ -1490,7 +1490,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 400,
-                        "name": 'м. Маріуполь та Маріупольська',
+                        "name": 'Маріуполь та Маріупольська',
                         "name_en": 'Mariupol and Mariupolska',
                     },
                     {
@@ -1602,7 +1602,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 424,
-                        "name": 'м. Бердичів та Бердичівська',
+                        "name": 'Бердичів та Бердичівська',
                         "name_en": 'Berdychiv and Berdychivska',
                     },
                     {
@@ -1699,7 +1699,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 442,
-                        "name": 'м. Житомир та Житомирська',
+                        "name": 'Житомир та Житомирська',
                         "name_en": 'Zhytomyr and Zhytomyrska',
                     },
                     {
@@ -1846,7 +1846,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 471,
-                        "name": 'м. Звягель та Звягельська',
+                        "name": 'Звягель та Звягельська',
                         "name_en": 'Zviahel and Zviahelska',
                     },
                     {
@@ -1898,7 +1898,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 480,
-                        "name": 'м. Коростень та Коростенська',
+                        "name": 'Коростень та Коростенська',
                         "name_en": 'Korosten and Korostenska',
                     },
                     {
@@ -1908,7 +1908,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 482,
-                        "name": 'м. Малин та Малинська',
+                        "name": 'Малин та Малинська',
                         "name_en": 'Malyn and Malynska',
                     },
                     {
@@ -1968,7 +1968,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 504,
-                        "name": 'м. Берегове та Берегівська',
+                        "name": 'Берегове та Берегівська',
                         "name_en": 'Berehove and Berehivska',
                     },
                     {
@@ -1988,7 +1988,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 508,
-                        "name": 'м. Виноградів та Виноградівська',
+                        "name": 'Виноградів та Виноградівська',
                         "name_en": 'Vynohradiv and Vynohradivska',
                     },
                     {
@@ -2050,7 +2050,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 547,
-                        "name": 'м. Мукачево та Мукачівська',
+                        "name": 'Мукачево та Мукачівська',
                         "name_en": 'Mukachevo and Mukachivska',
                     },
                     {
@@ -2102,7 +2102,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 538,
-                        "name": 'м. Рахів та Рахівська',
+                        "name": 'Рахів та Рахівська',
                         "name_en": 'Rakhiv and Rakhivska',
                     },
                     {
@@ -2154,7 +2154,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 520,
-                        "name": 'м. Тячів та Тячівська',
+                        "name": 'Тячів та Тячівська',
                         "name_en": 'Tiachiv and Tiachivska',
                     },
                     {
@@ -2231,7 +2231,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 500,
-                        "name": 'м. Ужгород та Ужгородська',
+                        "name": 'Ужгород та Ужгородська',
                         "name_en": 'Uzhhorod and Uzhhorodska',
                     },
                     {
@@ -2241,7 +2241,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 502,
-                        "name": 'м. Чоп та Чопська',
+                        "name": 'Чоп та Чопська',
                         "name_en": 'Chop and Chopska',
                     },
                 ],
@@ -2293,7 +2293,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 532,
-                        "name": "м. Міжгір'я та Міжгірська",
+                        "name": "Міжгір'я та Міжгірська",
                         "name_en": 'Mizhhiria and Mizhhirska',
                     },
                     {
@@ -2308,12 +2308,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 535,
-                        "name": 'м. Хуст та Хустська',
+                        "name": 'Хуст та Хустська',
                         "name_en": 'Khust and Khustska',
                     },
                     {
                         "uid": 529,
-                        "name": 'м. Іршава та Іршавська',
+                        "name": 'Іршава та Іршавська',
                         "name_en": 'Irshava and Irshavska',
                     },
                 ],
@@ -2343,7 +2343,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 555,
-                        "name": 'м. Бердянськ та Бердянська',
+                        "name": 'Бердянськ та Бердянська',
                         "name_en": 'Berdiansk and Berdianska',
                     },
                     {
@@ -2405,7 +2405,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 598,
-                        "name": 'м. Енергодар та Енергодарська',
+                        "name": 'Енергодар та Енергодарська',
                         "name_en": 'Enerhodar and Enerhodarska',
                     },
                     {
@@ -2457,7 +2457,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 564,
-                        "name": 'м. Запоріжжя та Запорізька',
+                        "name": 'Запоріжжя та Запорізька',
                         "name_en": 'Zaporizhzhia and Zaporizka',
                     },
                     {
@@ -2549,7 +2549,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 607,
-                        "name": 'м. Мелітополь та Мелітопольська',
+                        "name": 'Мелітополь та Мелітопольська',
                         "name_en": 'Melitopol and Melitopolska',
                     },
                     {
@@ -2686,7 +2686,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 591,
-                        "name": 'м. Токмак та Токмацька',
+                        "name": 'Токмак та Токмацька',
                         "name_en": 'Tokmak and Tokmatska',
                     },
                     {
@@ -2711,7 +2711,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 733,
-                        "name": 'м. Бориспіль та Бориспільська',
+                        "name": 'Бориспіль та Бориспільська',
                         "name_en": 'Boryspil and Boryspilska',
                     },
                     {
@@ -2736,7 +2736,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 738,
-                        "name": 'м. Переяслав та Переяславська',
+                        "name": 'Переяслав та Переяславська',
                         "name_en": 'Pereiaslav and Pereiaslavska',
                     },
                     {
@@ -2778,12 +2778,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 683,
-                        "name": 'м. Березань та Березанська',
+                        "name": 'Березань та Березанська',
                         "name_en": 'Berezan and Berezanska',
                     },
                     {
                         "uid": 684,
-                        "name": 'м. Бровари та Броварська',
+                        "name": 'Бровари та Броварська',
                         "name_en": 'Brovary and Brovarska',
                     },
                     {
@@ -2830,7 +2830,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 702,
-                        "name": 'м. Буча та Бучанська',
+                        "name": 'Буча та Бучанська',
                         "name_en": 'Bucha and Buchanska',
                     },
                     {
@@ -2875,7 +2875,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 706,
-                        "name": 'м. Ірпінь та Ірпінська',
+                        "name": 'Ірпінь та Ірпінська',
                         "name_en": 'Irpin and Irpinska',
                     },
                 ],
@@ -2887,7 +2887,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 711,
-                        "name": 'м. Біла Церква та Білоцерківська',
+                        "name": 'Біла Церква та Білоцерківська',
                         "name_en": 'Bila Tserkva and Bilotserkivska',
                     },
                     {
@@ -2984,7 +2984,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 750,
-                        "name": 'м. Славутич та Славутицька',
+                        "name": 'Славутич та Славутицька',
                         "name_en": 'Slavutych and Slavutytska',
                     },
                     {
@@ -3006,7 +3006,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 725,
-                        "name": 'м. Васильків та Васильківська',
+                        "name": 'Васильків та Васильківська',
                         "name_en": 'Vasylkiv and Vasylkivska',
                     },
                     {
@@ -3026,12 +3026,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 729,
-                        "name": 'м. Обухів та Обухівська',
+                        "name": 'Обухів та Обухівська',
                         "name_en": 'Obukhiv and Obukhivska',
                     },
                     {
                         "uid": 730,
-                        "name": 'м. Ржищів та Ржищівська',
+                        "name": 'Ржищів та Ржищівська',
                         "name_en": 'Rzhyshchiv and Rzhyshchivska',
                     },
                     {
@@ -3088,7 +3088,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 697,
-                        "name": 'м. Фастів та Фастівська',
+                        "name": 'Фастів та Фастівська',
                         "name_en": 'Fastiv and Fastivska',
                     },
                     {
@@ -3200,7 +3200,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 757,
-                        "name": "м. Знам'янка та Знам’янська",
+                        "name": "Знам'янка та Знам’янська",
                         "name_en": 'Znamianka and Znamyanska',
                     },
                     {
@@ -3220,7 +3220,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 761,
-                        "name": 'м. Кропивницький та Кропивницька',
+                        "name": 'Кропивницький та Кропивницька',
                         "name_en": 'Kropyvnytskyi and Kropyvnytska',
                     },
                     {
@@ -3344,7 +3344,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 780,
-                        "name": 'м. Олександрія та Олександрійська',
+                        "name": 'Олександрія та Олександрійська',
                         "name_en": 'Oleksandriia and Oleksandriiska',
                     },
                     {
@@ -3374,7 +3374,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 786,
-                        "name": 'м. Світловодськ та Світловодська',
+                        "name": 'Світловодськ та Світловодська',
                         "name_en": 'Svitlovodsk and Svitlovodska',
                     },
                 ],
@@ -3394,17 +3394,17 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1903,
-                        "name": 'м. Алчевськ та Алчевська',
+                        "name": 'Алчевськ та Алчевська',
                         "name_en": 'Alchevsk and Alchevska',
                     },
                     {
                         "uid": 1911,
-                        "name": "м. Зимогір'я та Зимогір'ївська",
+                        "name": "Зимогір'я та Зимогір'ївська",
                         "name_en": 'Zymohiria and Zymohirivska',
                     },
                     {
                         "uid": 1909,
-                        "name": 'м. Кадіївка та Кадіївська',
+                        "name": 'Кадіївка та Кадіївська',
                         "name_en": 'Kadiivka and Kadiivska',
                     },
                 ],
@@ -3416,12 +3416,12 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1908,
-                        "name": 'м. Довжанськ та Довжанська',
+                        "name": 'Довжанськ та Довжанська',
                         "name_en": 'Dovzhansk and Dovzhanska',
                     },
                     {
                         "uid": 1905,
-                        "name": 'м. Сорокине та Сорокинська',
+                        "name": 'Сорокине та Сорокинська',
                         "name_en": 'Sorokyne and Sorokynska',
                     },
                 ],
@@ -3433,17 +3433,17 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1901,
-                        "name": 'м. Луганськ та Луганська',
+                        "name": 'Луганськ та Луганська',
                         "name_en": 'Luhansk and Luhanska',
                     },
                     {
                         "uid": 1910,
-                        "name": 'м. Лутугине та Лутугинська',
+                        "name": 'Лутугине та Лутугинська',
                         "name_en": 'Lutuhyne and Lutuhynska',
                     },
                     {
                         "uid": 1904,
-                        "name": 'м. Молодогвардійськ та Молодогвардійська',
+                        "name": 'Молодогвардійськ та Молодогвардійська',
                         "name_en": 'Molodohvardiisk and Molodohvardiiska',
                     },
                 ],
@@ -3455,17 +3455,17 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1902,
-                        "name": 'м. Антрацит та Антрацитівська',
+                        "name": 'Антрацит та Антрацитівська',
                         "name_en": 'Antratsyt and Antratsytivska',
                     },
                     {
                         "uid": 1907,
-                        "name": 'м. Ровеньки та Ровеньківська',
+                        "name": 'Ровеньки та Ровеньківська',
                         "name_en": 'Rovenky and Rovenkivska',
                     },
                     {
                         "uid": 1906,
-                        "name": 'м. Хрустальний та Хрустальненська',
+                        "name": 'Хрустальний та Хрустальненська',
                         "name_en": 'Khrustalnyi and Khrustalnenska',
                     },
                 ],
@@ -3571,12 +3571,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 816,
-                        "name": 'м. Кремінна та Кремінська',
+                        "name": 'Кремінна та Кремінська',
                         "name_en": 'Kreminna and Kreminska',
                     },
                     {
                         "uid": 817,
-                        "name": 'м. Лисичанськ та Лисичанська',
+                        "name": 'Лисичанськ та Лисичанська',
                         "name_en": 'Lysychansk and Lysychanska',
                     },
                     {
@@ -3586,12 +3586,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 819,
-                        "name": 'м. Рубіжне та Рубіжанська',
+                        "name": 'Рубіжне та Рубіжанська',
                         "name_en": 'Rubizhne and Rubizhanska',
                     },
                     {
                         "uid": 820,
-                        "name": 'м. Сіверськодонецьк та Сіверськодонецька',
+                        "name": 'Сіверськодонецьк та Сіверськодонецька',
                         "name_en": 'Siverskodonetsk and Siverskodonetska',
                     },
                 ],
@@ -3643,12 +3643,12 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 867,
-                        "name": 'м. Борислав та Бориславська',
+                        "name": 'Борислав та Бориславська',
                         "name_en": 'Boryslav and Boryslavska',
                     },
                     {
                         "uid": 868,
-                        "name": 'м. Дрогобич та Дрогобицька',
+                        "name": 'Дрогобич та Дрогобицька',
                         "name_en": 'Drohobych and Drohobytska',
                     },
                     {
@@ -3663,7 +3663,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 871,
-                        "name": 'м. Трускавець та Трускавецька',
+                        "name": 'Трускавець та Трускавецька',
                         "name_en": 'Truskavets and Truskavetska',
                     },
                 ],
@@ -3777,7 +3777,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 845,
-                        "name": 'м. Львів та Львівська',
+                        "name": 'Львів та Львівська',
                         "name_en": 'Lviv and Lvivska',
                     },
                     {
@@ -3869,7 +3869,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 862,
-                        "name": 'м. Самбір та Самбірська',
+                        "name": 'Самбір та Самбірська',
                         "name_en": 'Sambir and Sambirska',
                     },
                     {
@@ -3931,12 +3931,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 885,
-                        "name": 'м. Моршин та Моршинська',
+                        "name": 'Моршин та Моршинська',
                         "name_en": 'Morshyn and Morshynska',
                     },
                     {
                         "uid": 886,
-                        "name": 'м. Новий Розділ та Новороздільська',
+                        "name": 'Новий Розділ та Новороздільська',
                         "name_en": 'Novyi Rozdil and Novorozdilska',
                     },
                     {
@@ -3956,7 +3956,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 890,
-                        "name": 'м. Стрий та Стрийська',
+                        "name": 'Стрий та Стрийська',
                         "name_en": 'Stryi and Stryiska',
                     },
                     {
@@ -4008,7 +4008,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 832,
-                        "name": 'м. Шептицький та Шептицька',
+                        "name": 'Шептицький та Шептицька',
                         "name_en": 'Sheptytskyi and Sheptytska',
                     },
                 ],
@@ -4065,7 +4065,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 907,
-                        "name": 'м. Баштанка та Баштанська',
+                        "name": 'Баштанка та Баштанська',
                         "name_en": 'Bashtanka and Bashtanska',
                     },
                     {
@@ -4105,7 +4105,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 916,
-                        "name": 'м. Снігурівка та Снігурівська',
+                        "name": 'Снігурівка та Снігурівська',
                         "name_en": 'Snihurivka and Snihurivska',
                     },
                     {
@@ -4147,7 +4147,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 941,
-                        "name": 'м. Вознесенськ та Вознесенська',
+                        "name": 'Вознесенськ та Вознесенська',
                         "name_en": 'Voznesensk and Voznesenska',
                     },
                     {
@@ -4187,7 +4187,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 950,
-                        "name": 'м. Южноукраїнськ та Южноукраїнська',
+                        "name": 'Южноукраїнськ та Южноукраїнська',
                         "name_en": 'Yuzhnoukrainsk and Yuzhnoukrainska',
                     },
                     {
@@ -4239,7 +4239,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 926,
-                        "name": 'м. Миколаїв та Миколаївська',
+                        "name": 'Миколаїв та Миколаївська',
                         "name_en": 'Mykolaiv and Mykolaivska',
                     },
                     {
@@ -4254,7 +4254,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 929,
-                        "name": 'м. Нова-Одеса та Новоодеська',
+                        "name": 'Нова-Одеса та Новоодеська',
                         "name_en": 'Nova-Odesa and Novoodeska',
                     },
                     {
@@ -4264,7 +4264,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 931,
-                        "name": 'м. Очаків та Очаківська',
+                        "name": 'Очаків та Очаківська',
                         "name_en": 'Ochakiv and Ochakivska',
                     },
                     {
@@ -4336,7 +4336,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 905,
-                        "name": 'м. Первомайськ та Первомайська',
+                        "name": 'Первомайськ та Первомайська',
                         "name_en": 'Pervomaisk and Pervomaiska',
                     },
                     {
@@ -4505,7 +4505,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1011,
-                        "name": 'м. Білгород-Дністровський та Білгород-Дністровська',
+                        "name": 'Білгород-Дністровський та Білгород-Дністровська',
                         "name_en": 'Bilhorod-Dnistrovskyi and Bilhorod-Dnistrovska',
                     },
                     {
@@ -4657,12 +4657,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 964,
-                        "name": 'м. Одеса та Одеська',
+                        "name": 'Одеса та Одеська',
                         "name_en": 'Odesa and Odeska',
                     },
                     {
                         "uid": 971,
-                        "name": 'м. Південне та Південна',
+                        "name": 'Південне та Південна',
                         "name_en": 'Pivdenne and Pivdenna',
                     },
                     {
@@ -4687,7 +4687,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 969,
-                        "name": 'м. Чорноморськ та Чорноморська',
+                        "name": 'Чорноморськ та Чорноморська',
                         "name_en": 'Chornomorsk and Chornomorska',
                     },
                     {
@@ -4853,7 +4853,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1037,
-                        "name": 'м. Ізмаїл та Ізмаїльська',
+                        "name": 'Ізмаїл та Ізмаїльська',
                         "name_en": 'Izmail and Izmailska',
                     },
                 ],
@@ -4878,7 +4878,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1084,
-                        "name": 'м. Горішні плавні та Горішньоплавнівська',
+                        "name": 'Горішні плавні та Горішньоплавнівська',
                         "name_en": 'Horishni plavni and Horishnoplavnivska',
                     },
                     {
@@ -4898,7 +4898,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1088,
-                        "name": 'м. Кременчук та Кременчуцька',
+                        "name": 'Кременчук та Кременчуцька',
                         "name_en": 'Kremenchuk and Kremenchutska',
                     },
                     {
@@ -4945,7 +4945,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1096,
-                        "name": 'м. Лубни та Лубенська',
+                        "name": 'Лубни та Лубенська',
                         "name_en": 'Lubny and Lubenska',
                     },
                     {
@@ -4960,7 +4960,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1099,
-                        "name": 'м. Пирятин та Пирятинська',
+                        "name": 'Пирятин та Пирятинська',
                         "name_en": 'Pyriatyn and Pyriatynska',
                     },
                     {
@@ -5027,7 +5027,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1075,
-                        "name": 'м. Лохвиця та Лохвицька',
+                        "name": 'Лохвиця та Лохвицька',
                         "name_en": 'Lokhvytsia and Lokhvytska',
                     },
                     {
@@ -5037,7 +5037,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1077,
-                        "name": 'м. Миргород та Миргородська',
+                        "name": 'Миргород та Миргородська',
                         "name_en": 'Myrhorod and Myrhorodska',
                     },
                     {
@@ -5164,7 +5164,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1060,
-                        "name": 'м. Полтава та Полтавська',
+                        "name": 'Полтава та Полтавська',
                         "name_en": 'Poltava and Poltavska',
                     },
                     {
@@ -5214,7 +5214,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1103,
-                        "name": 'м. Вараш та Вараська',
+                        "name": 'Вараш та Вараська',
                         "name_en": 'Varash and Varaska',
                     },
                     {
@@ -5281,7 +5281,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1152,
-                        "name": 'м. Дубно та Дубенська',
+                        "name": 'Дубно та Дубенська',
                         "name_en": 'Dubno and Dubenska',
                     },
                     {
@@ -5468,12 +5468,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1132,
-                        "name": 'м. Острог та Острозька',
+                        "name": 'Острог та Острозька',
                         "name_en": 'Ostroh and Ostrozka',
                     },
                     {
                         "uid": 1133,
-                        "name": 'м. Рівне та Рівненська',
+                        "name": 'Рівне та Рівненська',
                         "name_en": 'Rivne and Rivnenska',
                     },
                     {
@@ -5535,7 +5535,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1144,
-                        "name": 'м. Сарни та Сарненська',
+                        "name": 'Сарни та Сарненська',
                         "name_en": 'Sarny and Sarnenska',
                     },
                     {
@@ -5570,7 +5570,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1210,
-                        "name": 'м. Буринь та Буринська',
+                        "name": 'Буринь та Буринська',
                         "name_en": 'Buryn and Burynska',
                     },
                     {
@@ -5580,12 +5580,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1212,
-                        "name": 'м. Конотоп та Конотопська',
+                        "name": 'Конотоп та Конотопська',
                         "name_en": 'Konotop and Konotopska',
                     },
                     {
                         "uid": 1213,
-                        "name": 'м. Кролевець та Кролевецька',
+                        "name": 'Кролевець та Кролевецька',
                         "name_en": 'Krolevets and Krolevetska',
                     },
                     {
@@ -5600,7 +5600,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1216,
-                        "name": 'м. Путивль та Путивльська',
+                        "name": 'Путивль та Путивльська',
                         "name_en": 'Putyvl and Putyvlska',
                     },
                 ],
@@ -5617,7 +5617,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1201,
-                        "name": 'м. Велика Писарівка та Великописарівська',
+                        "name": 'Велика Писарівка та Великописарівська',
                         "name_en": 'Velyka Pysarivka and Velykopysarivska',
                     },
                     {
@@ -5637,12 +5637,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1205,
-                        "name": 'м. Охтирка та Охтирська',
+                        "name": 'Охтирка та Охтирська',
                         "name_en": 'Okhtyrka and Okhtyrska',
                     },
                     {
                         "uid": 1206,
-                        "name": 'м. Тростянець та Тростянецька',
+                        "name": 'Тростянець та Тростянецька',
                         "name_en": 'Trostianets and Trostianetska',
                     },
                     {
@@ -5679,17 +5679,17 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1169,
-                        "name": 'м. Липова Долина та Липоводолинська',
+                        "name": 'Липова Долина та Липоводолинська',
                         "name_en": 'Lypova Dolyna and Lypovodolynska',
                     },
                     {
                         "uid": 1170,
-                        "name": 'м. Недригайлів та Недригайлівська',
+                        "name": 'Недригайлів та Недригайлівська',
                         "name_en": 'Nedryhailiv and Nedryhailivska',
                     },
                     {
                         "uid": 1171,
-                        "name": 'м. Ромни та Роменська',
+                        "name": 'Ромни та Роменська',
                         "name_en": 'Romny and Romenska',
                     },
                     {
@@ -5716,7 +5716,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1175,
-                        "name": 'м. Білопілля та Білопільська',
+                        "name": 'Білопілля та Білопільська',
                         "name_en": 'Bilopillia and Bilopilska',
                     },
                     {
@@ -5731,12 +5731,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1178,
-                        "name": 'м. Краснопілля та Краснопільська',
+                        "name": 'Краснопілля та Краснопільська',
                         "name_en": 'Krasnopillia and Krasnopilska',
                     },
                     {
                         "uid": 1179,
-                        "name": 'м. Лебедин та Лебединська',
+                        "name": 'Лебедин та Лебединська',
                         "name_en": 'Lebedyn and Lebedynska',
                     },
                     {
@@ -5776,7 +5776,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1187,
-                        "name": 'м. Суми та Сумська',
+                        "name": 'Суми та Сумська',
                         "name_en": 'Sumy and Sumska',
                     },
                     {
@@ -5803,7 +5803,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1191,
-                        "name": 'м. Глухів та Глухівська',
+                        "name": 'Глухів та Глухівська',
                         "name_en": 'Hlukhiv and Hlukhivska',
                     },
                     {
@@ -5828,7 +5828,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1196,
-                        "name": 'м. Середина-Буда та Середино-Будська',
+                        "name": 'Середина-Буда та Середино-Будська',
                         "name_en": 'Seredyna-Buda and Seredyno-Budska',
                     },
                     {
@@ -5838,12 +5838,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1198,
-                        "name": 'м. Шостка та Шосткинська',
+                        "name": 'Шостка та Шосткинська',
                         "name_en": 'Shostka and Shostkynska',
                     },
                     {
                         "uid": 1199,
-                        "name": 'м. Ямпіль та Ямпільська',
+                        "name": 'Ямпіль та Ямпільська',
                         "name_en": 'Yampil and Yampilska',
                     },
                 ],
@@ -5878,7 +5878,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1267,
-                        "name": 'м. Кременець та Кременецька',
+                        "name": 'Кременець та Кременецька',
                         "name_en": 'Kremenets and Kremenetska',
                     },
                     {
@@ -5915,7 +5915,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1218,
-                        "name": 'м. Бережани та Бережанська',
+                        "name": 'Бережани та Бережанська',
                         "name_en": 'Berezhany and Berezhanska',
                     },
                     {
@@ -6025,7 +6025,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1241,
-                        "name": 'м. Тернопіль та Тернопільська',
+                        "name": 'Тернопіль та Тернопільська',
                         "name_en": 'Ternopil and Ternopilska',
                     },
                     {
@@ -6142,7 +6142,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1263,
-                        "name": 'м. Чортків та Чортківська',
+                        "name": 'Чортків та Чортківська',
                         "name_en": 'Chortkiv and Chortkivska',
                     },
                     {
@@ -6204,7 +6204,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 1300,
-                        "name": 'м. Богодухів та Богодухівська',
+                        "name": 'Богодухів та Богодухівська',
                         "name_en": 'Bohodukhiv and Bohodukhivska',
                     },
                     {
@@ -6251,7 +6251,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1309,
-                        "name": "м. Куп'янськ та Куп'янська",
+                        "name": "Куп'янськ та Куп'янська",
                         "name_en": 'Kupiansk and Kupianska',
                     },
                     {
@@ -6293,12 +6293,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1299,
-                        "name": 'м. Златопіль та Златопільська',
+                        "name": 'Златопіль та Златопільська',
                         "name_en": 'Zlatopil and Zlatopilska',
                     },
                     {
                         "uid": 1297,
-                        "name": 'м. Лозова та Лозівська',
+                        "name": 'Лозова та Лозівська',
                         "name_en": 'Lozova and Lozivska',
                     },
                     {
@@ -6340,7 +6340,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1285,
-                        "name": 'м. Люботин та Люботинська',
+                        "name": 'Люботин та Люботинська',
                         "name_en": 'Liubotyn and Liubotynska',
                     },
                     {
@@ -6380,7 +6380,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1293,
-                        "name": 'м. Харків та Харківська',
+                        "name": 'Харків та Харківська',
                         "name_en": 'Kharkiv and Kharkivska',
                     },
                     {
@@ -6437,7 +6437,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1321,
-                        "name": 'м. Чугуїв та Чугуївська',
+                        "name": 'Чугуїв та Чугуївська',
                         "name_en": 'Chuhuiv and Chuhuivska',
                     },
                 ],
@@ -6484,7 +6484,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1276,
-                        "name": 'м. Ізюм та Ізюмська',
+                        "name": 'Ізюм та Ізюмська',
                         "name_en": 'Izium and Iziumska',
                     },
                 ],
@@ -6618,7 +6618,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1333,
-                        "name": 'м. Каховка та Каховська',
+                        "name": 'Каховка та Каховська',
                         "name_en": 'Kakhovka and Kakhovska',
                     },
                     {
@@ -6633,7 +6633,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1336,
-                        "name": 'м. Нова Каховка та Новокаховська',
+                        "name": 'Нова Каховка та Новокаховська',
                         "name_en": 'Nova Kakhovka and Novokakhovska',
                     },
                     {
@@ -6680,7 +6680,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1355,
-                        "name": 'м. Гола Пристань та Голопристанська',
+                        "name": 'Гола Пристань та Голопристанська',
                         "name_en": 'Hola Prystan and Holoprystanska',
                     },
                     {
@@ -6762,7 +6762,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1370,
-                        "name": 'м. Херсон та Херсонська',
+                        "name": 'Херсон та Херсонська',
                         "name_en": 'Kherson and Khersonska',
                     },
                     {
@@ -6817,7 +6817,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1427,
-                        "name": "м. Кам'янець-Подільський та Кам'янець-Подільська",
+                        "name": "Кам'янець-Подільський та Кам'янець-Подільська",
                         "name_en": 'Kamianets-Podilskyi and Kamianets-Podilska',
                     },
                     {
@@ -6969,7 +6969,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1396,
-                        "name": 'м. Старокостянтинів та Старокостянтинівська',
+                        "name": 'Старокостянтинів та Старокостянтинівська',
                         "name_en": 'Starokostiantyniv and Starokostiantynivska',
                     },
                     {
@@ -6989,7 +6989,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1400,
-                        "name": 'м. Хмельницький та Хмельницька',
+                        "name": 'Хмельницький та Хмельницька',
                         "name_en": 'Khmelnytskyi and Khmelnytska',
                     },
                     {
@@ -7051,7 +7051,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1412,
-                        "name": 'м. Нетішин та Нетішинська',
+                        "name": 'Нетішин та Нетішинська',
                         "name_en": 'Netishyn and Netishynska',
                     },
                     {
@@ -7076,7 +7076,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1417,
-                        "name": 'м. Славута та Славутська',
+                        "name": 'Славута та Славутська',
                         "name_en": 'Slavuta and Slavutska',
                     },
                     {
@@ -7091,7 +7091,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1420,
-                        "name": 'м. Шепетівка та Шепетівська',
+                        "name": 'Шепетівка та Шепетівська',
                         "name_en": 'Shepetivka and Shepetivska',
                     },
                     {
@@ -7126,7 +7126,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1476,
-                        "name": 'м. Ватутіне та Ватутінська',
+                        "name": 'Ватутіне та Ватутінська',
                         "name_en": 'Vatutine and Vatutinska',
                     },
                     {
@@ -7186,7 +7186,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1489,
-                        "name": 'м. Тальне та Тальнівська',
+                        "name": 'Тальне та Тальнівська',
                         "name_en": 'Talne and Talnivska',
                     },
                     {
@@ -7196,7 +7196,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1491,
-                        "name": 'м. Шпола та Шполянська',
+                        "name": 'Шпола та Шполянська',
                         "name_en": 'Shpola and Shpolianska',
                     },
                     {
@@ -7310,7 +7310,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1445,
-                        "name": 'м. Монастирище та Монастрищенська',
+                        "name": 'Монастирище та Монастрищенська',
                         "name_en": 'Monastyryshche and Monastryshchenska',
                     },
                     {
@@ -7325,7 +7325,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1448,
-                        "name": 'м. Христинівка та Христинівська',
+                        "name": 'Христинівка та Христинівська',
                         "name_en": 'Khrystynivka and Khrystynivska',
                     },
                     {
@@ -7382,7 +7382,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1457,
-                        "name": 'м. Корсунь-Шевченківський та Корсунь-Шевченківська',
+                        "name": 'Корсунь-Шевченківський та Корсунь-Шевченківська',
                         "name_en": 'Korsun-Shevchenkivskyi and Korsun-Shevchenkivska',
                     },
                     {
@@ -7462,12 +7462,12 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1473,
-                        "name": 'м. Черкаси та Черкаська',
+                        "name": 'Черкаси та Черкаська',
                         "name_en": 'Cherkasy and Cherkaska',
                     },
                     {
                         "uid": 1474,
-                        "name": 'м. Чигирин та Чигиринська',
+                        "name": 'Чигирин та Чигиринська',
                         "name_en": 'Chyhyryn and Chyhyrynska',
                     },
                 ],
@@ -7569,7 +7569,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1551,
-                        "name": 'м. Новодністровськ та Новодністровська',
+                        "name": 'Новодністровськ та Новодністровська',
                         "name_en": 'Novodnistrovsk and Novodnistrovska',
                     },
                     {
@@ -7746,7 +7746,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1542,
-                        "name": 'м. Чернівці та Чернівецька',
+                        "name": 'Чернівці та Чернівецька',
                         "name_en": 'Chernivtsi and Chernivetska',
                     },
                     {
@@ -7813,7 +7813,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1604,
-                        "name": 'м. Новгород-Сіверський та Новгород-Сіверська',
+                        "name": 'Новгород-Сіверський та Новгород-Сіверська',
                         "name_en": 'Novhorod-Siverskyi and Novhorod-Siverska',
                     },
                     {
@@ -7905,7 +7905,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1567,
-                        "name": 'м. Ніжин та Ніжинська',
+                        "name": 'Ніжин та Ніжинська',
                         "name_en": 'Nizhyn and Nizhynska',
                     },
                     {
@@ -7952,7 +7952,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1598,
-                        "name": 'м. Прилуки та Прилуцька',
+                        "name": 'Прилуки та Прилуцька',
                         "name_en": 'Pryluky and Prylutska',
                     },
                     {
@@ -8079,7 +8079,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 1591,
-                        "name": 'м. Чернігів та Чернігівська',
+                        "name": 'Чернігів та Чернігівська',
                         "name_en": 'Chernihiv and Chernihivska',
                     },
                     {
@@ -8126,7 +8126,7 @@ LOCATIONS: list[Location] = [
                 "hromadas": [
                     {
                         "uid": 643,
-                        "name": 'м. Болехів та Болехівська',
+                        "name": 'Болехів та Болехівська',
                         "name_en": 'Bolekhiv and Bolekhivska',
                     },
                     {
@@ -8156,7 +8156,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 649,
-                        "name": 'м. Долина та Долинська',
+                        "name": 'Долина та Долинська',
                         "name_en": 'Dolyna and Dolynska',
                     },
                     {
@@ -8166,7 +8166,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 651,
-                        "name": 'м. Калуш та Калуська',
+                        "name": 'Калуш та Калуська',
                         "name_en": 'Kalush and Kaluska',
                     },
                     {
@@ -8213,7 +8213,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 667,
-                        "name": 'м. Коломия та Коломийська',
+                        "name": 'Коломия та Коломийська',
                         "name_en": 'Kolomyia and Kolomyiska',
                     },
                     {
@@ -8317,7 +8317,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 659,
-                        "name": 'м. Надвірна та Надвірнянська',
+                        "name": 'Надвірна та Надвірнянська',
                         "name_en": 'Nadvirna and Nadvirnianska',
                     },
                     {
@@ -8337,7 +8337,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 663,
-                        "name": 'м. Яремче та Яремчанська',
+                        "name": 'Яремче та Яремчанська',
                         "name_en": 'Yaremche and Yaremchanska',
                     },
                 ],
@@ -8359,7 +8359,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 626,
-                        "name": 'м. Бурштин та Бурштинська',
+                        "name": 'Бурштин та Бурштинська',
                         "name_en": 'Burshtyn and Burshtynska',
                     },
                     {
@@ -8444,7 +8444,7 @@ LOCATIONS: list[Location] = [
                     },
                     {
                         "uid": 632,
-                        "name": 'м. Івано-Франківськ та Івано-Франківська',
+                        "name": 'Івано-Франківськ та Івано-Франківська',
                         "name_en": 'Ivano-Frankivsk and Ivano-Frankivska',
                     },
                 ],
