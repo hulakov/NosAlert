@@ -69,9 +69,7 @@ def format_location_name(name: str, loc_type: str) -> str:
     if loc_type == LocationType.OBLAST:
         return f"{clean_name} область"
     elif loc_type == LocationType.AUTONOMOUS_REPUBLIC:
-        if clean_name.lower() == "крим":
-            return f"Автономна Республіка {clean_name}"
-        return clean_name
+        return f"Автономна Республіка {clean_name}"
     elif loc_type == LocationType.SPECIAL_CITY:
         return f"місто {clean_name}"
         
