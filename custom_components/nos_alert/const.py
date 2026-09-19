@@ -91,6 +91,7 @@ for _loc in iter_all_locations():
     LOCATION_DISPLAY_NAME_MAP[_uid] = _display
     LOCATION_DISPLAY_NAME_MAP[_name.lower()] = _display
     LOCATION_DISPLAY_NAME_MAP[_name_en.lower()] = _display
+    LOCATION_DISPLAY_NAME_MAP[_slug] = _display
 
     # Handle "м. " / "м." stripped titles (e.g. "київ" -> "31")
     _without_m = re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip()
