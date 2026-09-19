@@ -27,7 +27,7 @@ from .location_helpers import slugify_location
 REGION_OPTIONS = [
     SelectOptionDict(
         value=slugify_location(loc["name_en"]),
-        label=loc["name"]
+        label=loc["name"] + (" область" if loc["type"] == LocationType.OBLAST else "")
     )
     for loc in LOCATIONS
     if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
