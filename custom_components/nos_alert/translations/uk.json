@@ -43,9 +43,6 @@
       "active_threats": {
         "name": "Активні загрози"
       },
-      "threat_count": {
-        "name": "Кількість загроз"
-      },
       "affected_regions": {
         "name": "Райони під тривогою"
       },

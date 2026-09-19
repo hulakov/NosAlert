@@ -40,7 +40,6 @@ async def async_setup_entry(
     for loc in locations:
         entities.append(NosAlertColorSensor(coordinator, loc))
         entities.append(NosAlertThreatsSensor(coordinator, loc))
-        entities.append(NosAlertThreatCountSensor(coordinator, loc))
         entities.append(NosAlertAffectedRegionsSensor(coordinator, loc))
         entities.append(NosAlertStartTimeSensor(coordinator, loc))
 
@@ -158,41 +157,6 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
             "source_messages": loc_data.get("source_messages", []),
             "threats_detail": threats,
         }
-
-
-class NosAlertThreatCountSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
-    """Sensor entity representing numeric count of active threats."""
-
-    _attr_has_entity_name = True
-    _attr_translation_key = "threat_count"
-    _attr_icon = "mdi:counter"
-    _attr_state_class = SensorStateClass.MEASUREMENT
-
-    def __init__(
-        self,
-        coordinator: NosAlertDataUpdateCoordinator,
-        location: str,
-    ) -> None:
-        """Initialize threat count sensor."""
-        super().__init__(coordinator)
-        self.location = location
-        self._slug = slugify_location(location)
-        display_name = get_location_display_name(location)
-
-        self._attr_unique_id = f"nos_alert_{self._slug}_threat_count"
-        self._attr_suggested_object = f"nosalert_{self._slug}_threat_count"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
-            name=f"NosAlert {display_name}",
-            manufacturer="alerts.in.ua",
-            model="Air Raid Alert Regional Monitor",
-        )
-
-    @property
-    def native_value(self) -> int:
-        """Return number of active threats."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        return int(loc_data.get("threats_count", 0))
 
 
 class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):

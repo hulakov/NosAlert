@@ -43,9 +43,6 @@
       "active_threats": {
         "name": "Active Threats"
       },
-      "threat_count": {
-        "name": "Threat Count"
-      },
       "affected_regions": {
         "name": "Affected Regions"
       },
