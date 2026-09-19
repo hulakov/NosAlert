@@ -5,8 +5,13 @@
 A custom integration for **Home Assistant** that connects to the official REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) to provide real-time information about air raid alerts and threats across regions of Ukraine.
 
 <p align="center">
-  <img src="docs/images/ha_sensors.png" alt="NosAlert Sensors in Home Assistant" width="400">
-  <img src="docs/images/ha_devices.png" alt="NosAlert Devices in Home Assistant" width="600">
+  <img src="docs/images/ha_devices.png" alt="NosAlert Devices in Home Assistant" width="700">
+</p>
+
+<p align="center">
+  <img src="docs/images/ha_sensors_alert.png" alt="NosAlert Sensors — Active Alert" width="340">
+  &nbsp;&nbsp;
+  <img src="docs/images/ha_sensors_clear.png" alt="NosAlert Sensors — All Clear" width="340">
 </p>
 
 ---

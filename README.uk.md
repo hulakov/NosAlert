@@ -5,8 +5,13 @@
 Кастомна інтеграція для **Home Assistant**, яка підключається до офіційного REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) та надає оперативну інформацію про повітряні тривоги та загрози по регіонах України.
 
 <p align="center">
-  <img src="docs/images/ha_sensors.png" alt="Сенсори NosAlert в Home Assistant" width="400">
-  <img src="docs/images/ha_devices.png" alt="Пристрої NosAlert в Home Assistant" width="600">
+  <img src="docs/images/ha_devices.png" alt="Пристрої NosAlert в Home Assistant" width="700">
+</p>
+
+<p align="center">
+  <img src="docs/images/ha_sensors_alert.png" alt="Сенсори NosAlert — Активна тривога" width="340">
+  &nbsp;&nbsp;
+  <img src="docs/images/ha_sensors_clear.png" alt="Сенсори NosAlert — Спокійно" width="340">
 </p>
 
 ---
