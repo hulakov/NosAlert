@@ -236,8 +236,8 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
 
         affected = loc_data.get("affected_locations", [])
         if affected:
-            # Join with newlines
-            val = "\n".join(affected)
+            # Join with comma and space
+            val = ", ".join(affected)
             # Home Assistant states have a 255 char limit
             if len(val) > 255:
                 return val[:252] + "..."
