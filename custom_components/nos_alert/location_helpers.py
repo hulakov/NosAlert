@@ -71,6 +71,14 @@ for _loc in iter_all_locations():
     _name_en = _loc["name_en"]
     _slug = _slugify_raw(_name_en)
     
+    # Restore legacy suffixes for slugs to maintain backward compatibility with existing unique_ids
+    if _loc.get("type") == LocationType.OBLAST:
+        _slug += "_oblast"
+    elif _loc.get("type") == LocationType.RAION:
+        _slug += "_raion"
+    elif _loc.get("type") == LocationType.HROMADA:
+        _slug += "_hromada"
+    
     LOCATIONS_BY_UID[_uid] = {
         "uid": _uid,
         "name": _name,
