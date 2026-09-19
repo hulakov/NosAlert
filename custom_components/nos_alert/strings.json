@@ -36,8 +36,8 @@
         "name": "Alert Severity Level",
         "state": {
           "none": "Clear",
-          "yellow": "Partial Warning (Yellow)",
-          "red": "Air Raid Alert! (Red)"
+          "yellow": "Yellow",
+          "red": "Red"
         }
       },
       "active_threats": {
