@@ -140,6 +140,11 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     # Prefer the clean 'name_without_m' if available, otherwise 'name'
                     loc_name = LOCATIONS_BY_UID[alert_loc_uid].get("name_without_m") or LOCATIONS_BY_UID[alert_loc_uid].get("name")
                     if loc_name:
+                        # Shorten the name for UI by removing generic suffixes
+                        for suffix in [" район", " міська територіальна громада", " селищна територіальна громада", " сільська територіальна громада", " територіальна громада", " міська рада", " селищна рада", " сільська рада"]:
+                            if loc_name.endswith(suffix):
+                                loc_name = loc_name[:-len(suffix)]
+                                
                         alert_level = alert.get("alert_level", "red")
                         circle = "🔴" if alert_level == "red" else "🟡"
                         # No space between circle and name to guarantee they stay together
