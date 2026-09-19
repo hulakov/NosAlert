@@ -1,7 +1,13 @@
 """Constants for the NosAlert Home Assistant integration."""
 
 import re
+import unicodedata
 from typing import Any
+
+try:
+    from homeassistant.util import slugify as ha_slugify
+except ImportError:
+    ha_slugify = None
 
 try:
     from .locations import LOCATIONS, LocationType
@@ -53,13 +59,11 @@ LOCATIONS_BY_UID: dict[str, dict[str, Any]] = {}
 
 def _slugify_raw(text: str) -> str:
     """Helper for fallback text slugification."""
-    try:
-        from homeassistant.util import slugify as ha_slugify
+    if ha_slugify is not None:
         return ha_slugify(text)
-    except ImportError:
-        import unicodedata
-        normalized = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8")
-        return re.sub(r"[^a-z0-9]+", "_", normalized.lower()).strip("_")
+        
+    normalized = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8")
+    return re.sub(r"[^a-z0-9]+", "_", normalized.lower()).strip("_")
 
 
 for _loc in iter_all_locations():
