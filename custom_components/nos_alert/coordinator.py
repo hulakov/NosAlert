@@ -142,8 +142,8 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     if loc_name:
                         alert_level = alert.get("alert_level", "red")
                         circle = "🔴" if alert_level == "red" else "🟡"
-                        # Use non-breaking space to prevent wrapping between circle and name
-                        loc_display = f"{circle}\xa0{loc_name}"
+                        # No space between circle and name to guarantee they stay together
+                        loc_display = f"{circle}{loc_name}"
                         if loc_display not in affected_locations:
                             affected_locations.append(loc_display)
             
