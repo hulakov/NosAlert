@@ -236,6 +236,19 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
 
         affected = loc_data.get("affected_locations", [])
         if affected:
-            return ", ".join(affected)
+            # Join with newlines
+            val = "\n".join(affected)
+            # Home Assistant states have a 255 char limit
+            if len(val) > 255:
+                return val[:252] + "..."
+            return val
 
         return "Вся область"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return full list of affected regions in attributes to bypass 255 char limit."""
+        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        return {
+            "regions": loc_data.get("affected_locations", [])
+        }
