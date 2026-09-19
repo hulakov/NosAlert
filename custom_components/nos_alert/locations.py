@@ -32,7 +32,6 @@ class Location(TypedDict):
     type: LocationType
     name_en: str
     districts: NotRequired[list[District]]
-    hromadas: NotRequired[list[Hromada]]
 
 LOCATIONS: list[Location] = [
     {

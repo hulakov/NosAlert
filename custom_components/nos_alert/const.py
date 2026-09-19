@@ -28,8 +28,6 @@ def iter_all_locations():
             yield {**district, "type": LocationType.RAION}
             for hromada in district.get("hromadas", []):
                 yield {**hromada, "type": LocationType.HROMADA}
-        for hromada in loc.get("hromadas", []):  # oblast-level hromadas (edge case)
-            yield {**hromada, "type": LocationType.HROMADA}
 
 
 
