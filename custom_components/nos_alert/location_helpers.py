@@ -101,7 +101,7 @@ for _loc in iter_all_locations():
         _slug += "_raion"
     elif _loc.get("type") == LocationType.HROMADA:
         _slug += "_hromada"
-    elif _uid == "29":
+    elif _loc.get("type") == LocationType.AUTONOMOUS_REPUBLIC:
         # Legacy slug for Crimea
         _slug = "autonomous_republic_of_crimea"
     
