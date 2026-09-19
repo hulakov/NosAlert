@@ -91,6 +91,14 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return detailed state attributes including threats array."""
         loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        state = self.native_value
+        if state == "red":
+            icon_color = "red"
+        elif state == "yellow":
+            icon_color = "amber"
+        else:
+            icon_color = "green"
+
         return {
             "location_title": self.location,
             "alert_type": loc_data.get("alert_type"),
@@ -98,7 +106,9 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
             "threats_count": loc_data.get("threats_count", 0),
             "threats": loc_data.get("threats", []),
             "source_messages": loc_data.get("source_messages", []),
+            "icon_color": icon_color,
         }
+
 
 
 class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], SensorEntity):
@@ -148,11 +158,13 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
         """Return active threats details."""
         loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
         threats = loc_data.get("threats", [])
+        is_active = loc_data.get("is_active", False)
         return {
             "threats_count": len(threats),
             "threats_list": [t.get("description") for t in threats if t.get("description")],
             "source_messages": loc_data.get("source_messages", []),
             "threats_detail": threats,
+            "icon_color": "red" if is_active else "green",
         }
 
 

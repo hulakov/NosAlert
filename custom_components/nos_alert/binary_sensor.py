@@ -84,4 +84,6 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
             "location_title": self.location,
             "alert_level": loc_data.get("alert_level", "none"),
             "threats_count": loc_data.get("threats_count", 0),
+            "icon_color": "red" if self.is_on else "green",
         }
+
