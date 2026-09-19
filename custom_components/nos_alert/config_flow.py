@@ -66,9 +66,7 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_API_TOKEN): str,
-                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(
-                    {loc: loc for loc in REGIONS}
-                ),
+                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(REGIONS),
             }
         )
 
@@ -125,9 +123,7 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(
-                    {loc: loc for loc in REGIONS}
-                ),
+                vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(REGIONS),
             }
         )
 
