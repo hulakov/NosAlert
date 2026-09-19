@@ -30,7 +30,7 @@ REGION_OPTIONS = [
         label=loc["name"]
     )
     for loc in LOCATIONS
-    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
+    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
 ]
 
 

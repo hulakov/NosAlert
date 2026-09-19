@@ -8451,4 +8451,10 @@ LOCATIONS: list[Location] = [
             },
         ],
     },
+    {
+        "uid": 9,
+        "name": 'Крим',
+        "type": LocationType.AUTONOMOUS_REPUBLIC,
+        "name_en": 'Crimea',
+    },
 ]

@@ -13,6 +13,7 @@ except ImportError:
 class LocationType(StrEnum):
     """Types of locations in Ukraine."""
     SPECIAL_CITY = "Місто з спеціальним статусом"
+    AUTONOMOUS_REPUBLIC = "Автономна Республіка"
     OBLAST = "Область"
     RAION = "Район"
     HROMADA = "Громада"
