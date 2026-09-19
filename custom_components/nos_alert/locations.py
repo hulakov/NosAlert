@@ -96,9 +96,9 @@ LOCATIONS: list[Location] = [
     },
     {
         "uid": 29,
-        "name": 'Автономна Республіка Крим',
-        "type": LocationType.OBLAST,
-        "name_en": 'Autonomous Republic of Crimea',
+        "name": 'Крим',
+        "type": LocationType.AUTONOMOUS_REPUBLIC,
+        "name_en": 'Crimea',
         "districts": [
             {
                 "uid": 41,
@@ -8450,11 +8450,5 @@ LOCATIONS: list[Location] = [
                 ],
             },
         ],
-    },
-    {
-        "uid": 9,
-        "name": 'Крим',
-        "type": LocationType.AUTONOMOUS_REPUBLIC,
-        "name_en": 'Crimea',
     },
 ]
