@@ -82,14 +82,17 @@ for _loc in iter_all_locations():
         # Legacy slug for Crimea
         _slug = "autonomous_republic_of_crimea"
     
+    _clean_name = re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip()
+    _display_name = _clean_name + (" область" if _loc.get("type") == LocationType.OBLAST else "")
+    
     LOCATIONS_BY_UID[_uid] = {
         "uid": _uid,
         "name": _name,
         "name_en": _name_en,
         "slug": _slug,
         "parent_oblast_uid": str(_loc.get("parent_oblast_uid")),
-        "display_name": re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip(),
-        "name_without_m": re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip(),
+        "display_name": _display_name,
+        "name_without_m": _clean_name,
     }
 
 def resolve_location_uid(location_input: str) -> str:
