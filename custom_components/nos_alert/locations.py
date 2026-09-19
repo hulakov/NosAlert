@@ -7,6 +7,7 @@ Title: АДМІНІСТРАТИВНО-ТЕРИТОРІАЛЬНИЙ УСТРІЙ 
 Total entries: 1622 (ієрархічна структура: Область → districts[] → hromadas[])
 """
 from enum import StrEnum
+from typing import TypedDict, NotRequired
 
 class LocationType(StrEnum):
     SPECIAL_CITY = "Місто з спеціальним статусом"
@@ -14,7 +15,26 @@ class LocationType(StrEnum):
     RAION = "Район"
     HROMADA = "Громада"
 
-LOCATIONS = [
+class HromadaDict(TypedDict):
+    uid: int
+    name: str
+    name_en: str
+
+class DistrictDict(TypedDict):
+    uid: int
+    name: str
+    name_en: str
+    hromadas: NotRequired[list[HromadaDict]]
+
+class LocationDict(TypedDict):
+    uid: int
+    name: str
+    type: LocationType
+    name_en: str
+    districts: NotRequired[list[DistrictDict]]
+    hromadas: NotRequired[list[HromadaDict]]
+
+LOCATIONS: list[LocationDict] = [
     {
         "uid": 31,
         "name": 'м. Київ',

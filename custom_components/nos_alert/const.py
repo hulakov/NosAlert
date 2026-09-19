@@ -1,6 +1,7 @@
 """Constants for the NosAlert Home Assistant integration."""
 
 import re
+from typing import Any
 
 try:
     from .locations import LOCATIONS, LocationType
@@ -49,7 +50,7 @@ THREAT_DESCRIPTIONS = {
 
 # --- Dynamic dictionary construction from official LOCATIONS database ---
 
-LOCATIONS_BY_UID: dict[str, dict[str, str]] = {str(loc["uid"]): loc for loc in iter_all_locations()}
+LOCATIONS_BY_UID: dict[str, Any] = {str(loc["uid"]): loc for loc in iter_all_locations()}
 
 LOCATION_UID_MAP: dict[str, str] = {}
 LOCATION_SLUG_MAP: dict[str, str] = {}
