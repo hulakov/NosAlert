@@ -139,11 +139,15 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if alert_loc_uid in LOCATIONS_BY_UID:
                     # Prefer the clean 'name_without_m' if available, otherwise 'name'
                     loc_name = LOCATIONS_BY_UID[alert_loc_uid].get("name_without_m") or LOCATIONS_BY_UID[alert_loc_uid].get("name")
-                    if loc_name and loc_name not in affected_locations:
-                        affected_locations.append(loc_name)
+                    if loc_name:
+                        alert_level = alert.get("alert_level", "red")
+                        circle = "🔴" if alert_level == "red" else "🟡"
+                        loc_display = f"{circle} {loc_name}"
+                        if loc_display not in affected_locations:
+                            affected_locations.append(loc_display)
             
             # Sort them alphabetically for better readability
-            affected_locations.sort()
+            affected_locations.sort(key=lambda x: x.lstrip("🔴🟡 "))
 
             result[loc] = {
                 "alert_level": overall_level,
