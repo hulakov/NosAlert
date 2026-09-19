@@ -13,6 +13,7 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     LOCATION_UID_MAP,
+    LOCATION_UKR_NAME_MAP,
     THREAT_DESCRIPTIONS,
 )
 
@@ -81,13 +82,17 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         for loc in self.locations:
             loc_uid = resolve_location_uid(loc)
+            loc_ukr_name = LOCATION_UKR_NAME_MAP.get(loc_uid, loc)
+
             target_alerts = [
                 a for a in self._cached_alerts_list
                 if str(a.get("location_uid", "")) == loc
                 or str(a.get("location_uid", "")) == loc_uid
                 or str(a.get("location_oblast_uid", "")) == loc_uid
                 or str(a.get("location_title", "")).lower() == loc.lower()
+                or str(a.get("location_title", "")).lower() == loc_ukr_name.lower()
                 or str(a.get("location_oblast", "")).lower() == loc.lower()
+                or str(a.get("location_oblast", "")).lower() == loc_ukr_name.lower()
             ]
 
             if not target_alerts:

@@ -12,7 +12,7 @@ _const_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cust
 if _const_dir not in sys.path:
     sys.path.insert(0, _const_dir)
 
-from const import LOCATION_UID_MAP, THREAT_DESCRIPTIONS
+from const import LOCATION_UID_MAP, LOCATION_UKR_NAME_MAP, THREAT_DESCRIPTIONS
 
 
 def resolve_location_uid(location_input: str) -> str:
@@ -78,6 +78,7 @@ def check_active_alerts(api_token: str, location: str, verbose: bool = False):
         alerts_list = raw_data.get("alerts", [])
 
         target_uid = resolve_location_uid(location)
+        loc_ukr_name = LOCATION_UKR_NAME_MAP.get(target_uid, location)
 
         # Filter alerts for specified location (matching UID, title, or oblast)
         target_alerts = [
@@ -86,7 +87,9 @@ def check_active_alerts(api_token: str, location: str, verbose: bool = False):
             or str(a.get("location_uid", "")) == target_uid
             or str(a.get("location_oblast_uid", "")) == target_uid
             or str(a.get("location_title", "")).lower() == location.lower()
+            or str(a.get("location_title", "")).lower() == loc_ukr_name.lower()
             or str(a.get("location_oblast", "")).lower() == location.lower()
+            or str(a.get("location_oblast", "")).lower() == loc_ukr_name.lower()
         ]
 
         if verbose:
@@ -226,13 +229,18 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
                 time.sleep(interval)
                 continue
 
+            target_uid = resolve_location_uid(location)
+            loc_ukr_name = LOCATION_UKR_NAME_MAP.get(target_uid, location)
+
             target_alerts = [
                 a for a in alerts_list
                 if str(a.get("location_uid", "")) == location
                 or str(a.get("location_uid", "")) == target_uid
                 or str(a.get("location_oblast_uid", "")) == target_uid
                 or str(a.get("location_title", "")).lower() == location.lower()
+                or str(a.get("location_title", "")).lower() == loc_ukr_name.lower()
                 or str(a.get("location_oblast", "")).lower() == location.lower()
+                or str(a.get("location_oblast", "")).lower() == loc_ukr_name.lower()
             ]
 
             current_state = {}

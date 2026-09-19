@@ -53,6 +53,7 @@ LOCATIONS_BY_UID: dict[str, Any] = {str(loc["uid"]): loc for loc in iter_all_loc
 LOCATION_UID_MAP: dict[str, str] = {}
 LOCATION_SLUG_MAP: dict[str, str] = {}
 LOCATION_DISPLAY_NAME_MAP: dict[str, str] = {}
+LOCATION_UKR_NAME_MAP: dict[str, str] = {}
 
 
 def _slugify_raw(text: str) -> str:
@@ -76,6 +77,7 @@ for _loc in iter_all_locations():
     LOCATION_UID_MAP[_uid] = _uid
     LOCATION_UID_MAP[_name.lower()] = _uid
     LOCATION_UID_MAP[_name_en.lower()] = _uid
+    LOCATION_UKR_NAME_MAP[_uid] = _name
     # Ensure slug maps to UID for coordinator resolution
     _slug = _slugify_raw(_name_en)
     LOCATION_UID_MAP[_slug] = _uid
