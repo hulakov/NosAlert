@@ -46,3 +46,27 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+        new_data = {**config_entry.data}
+        old_locations = new_data.get(CONF_LOCATIONS, [])
+        new_locations = []
+        
+        from .const import LOCATION_UID_MAP
+        
+        for old_loc in old_locations:
+            if old_loc.lower() in LOCATION_UID_MAP:
+                new_locations.append(LOCATION_UID_MAP[old_loc.lower()])
+            else:
+                new_locations.append(old_loc)  # Fallback if somehow not found
+        
+        new_data[CONF_LOCATIONS] = new_locations
+        hass.config_entries.async_update_entry(config_entry, data=new_data, version=2)
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+    return True
