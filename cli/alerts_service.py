@@ -12,7 +12,8 @@ _const_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cust
 if _const_dir not in sys.path:
     sys.path.insert(0, _const_dir)
 
-from const import LOCATIONS_BY_UID, resolve_location_uid, THREAT_DESCRIPTIONS
+from const import THREAT_DESCRIPTIONS
+from location_helpers import LOCATIONS_BY_UID, resolve_location_uid
 
 
 

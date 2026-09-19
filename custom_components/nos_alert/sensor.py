@@ -16,9 +16,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-from .const import (
-    CONF_LOCATIONS,
-    DOMAIN,
+from .const import CONF_LOCATIONS, DOMAIN
+from .location_helpers import (
     get_location_display_name,
     slugify_location,
 )

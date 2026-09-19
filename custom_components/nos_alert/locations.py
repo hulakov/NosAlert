@@ -6,32 +6,10 @@ Google Spreadsheet: https://docs.google.com/spreadsheets/d/1XnTOzcPHd1LZUrarR1Fk
 Title: АДМІНІСТРАТИВНО-ТЕРИТОРІАЛЬНИЙ УСТРІЙ УКРАІНИ (alerts.in.ua UID список)
 Total entries: 1622 (ієрархічна структура: Область → districts[] → hromadas[])
 """
-from enum import StrEnum
-from typing import TypedDict, NotRequired
-
-class LocationType(StrEnum):
-    SPECIAL_CITY = "Місто з спеціальним статусом"
-    OBLAST = "Область"
-    RAION = "Район"
-    HROMADA = "Громада"
-
-class Hromada(TypedDict):
-    uid: int
-    name: str
-    name_en: str
-
-class District(TypedDict):
-    uid: int
-    name: str
-    name_en: str
-    hromadas: NotRequired[list[Hromada]]
-
-class Location(TypedDict):
-    uid: int
-    name: str
-    type: LocationType
-    name_en: str
-    districts: NotRequired[list[District]]
+try:
+    from .location_helpers import LocationType, Hromada, District, Location
+except ImportError:
+    from location_helpers import LocationType, Hromada, District, Location
 
 LOCATIONS: list[Location] = [
     {

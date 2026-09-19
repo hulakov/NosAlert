@@ -12,10 +12,9 @@ from .const import (
     API_ACTIVE_ALERTS_URL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
-    LOCATIONS_BY_UID,
-    resolve_location_uid,
     THREAT_DESCRIPTIONS,
 )
+from .location_helpers import LOCATIONS_BY_UID, resolve_location_uid
 
 _LOGGER = logging.getLogger(__name__)
 

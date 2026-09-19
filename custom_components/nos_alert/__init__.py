@@ -5,7 +5,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_API_TOKEN, CONF_LOCATIONS, DOMAIN, LOCATIONS_BY_UID, resolve_location_uid
+from .const import CONF_API_TOKEN, CONF_LOCATIONS, DOMAIN
+from .location_helpers import LOCATIONS_BY_UID, resolve_location_uid
 from .coordinator import NosAlertDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
