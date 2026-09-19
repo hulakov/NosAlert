@@ -12,21 +12,15 @@ from .const import (
     API_ACTIVE_ALERTS_URL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
-    LOCATION_UID_MAP,
-    LOCATION_UKR_NAME_MAP,
+    LOCATIONS_BY_UID,
+    resolve_location_uid,
     THREAT_DESCRIPTIONS,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def resolve_location_uid(location_input: str) -> str:
-    """Resolves location title or numeric string to a valid Location UID string."""
-    loc_str = str(location_input).strip()
-    if loc_str.isdigit():
-        return loc_str
-    loc_lower = loc_str.lower()
-    return LOCATION_UID_MAP.get(loc_lower, loc_str)
+
 
 
 class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
@@ -82,22 +76,16 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         for loc in self.locations:
             loc_uid = resolve_location_uid(loc)
-            loc_ukr_name = LOCATION_UKR_NAME_MAP.get(loc_uid, loc)
 
-            # Note: alerts.in.ua API has a bug where `location_oblast_uid` for districts
-            # wrongly duplicates the district's own UID instead of the parent Oblast's UID.
-            # To reliably match child districts when an Oblast is selected, we MUST rely
-            # on the text-based fallback matching `location_oblast` against the canonical
-            # Ukrainian name of the location (via LOCATION_UKR_NAME_MAP).
+            # Filter alerts for specified location.
+            # We use LOCATIONS_BY_UID because the alerts.in.ua API has a bug where
+            # `location_oblast_uid` for districts wrongly duplicates the district's own UID.
             target_alerts = [
                 a for a in self._cached_alerts_list
                 if str(a.get("location_uid", "")) == loc
                 or str(a.get("location_uid", "")) == loc_uid
                 or str(a.get("location_oblast_uid", "")) == loc_uid
-                or str(a.get("location_title", "")).lower() == loc.lower()
-                or str(a.get("location_title", "")).lower() == loc_ukr_name.lower()
-                or str(a.get("location_oblast", "")).lower() == loc.lower()
-                or str(a.get("location_oblast", "")).lower() == loc_ukr_name.lower()
+                or (str(a.get("location_uid", "")) in LOCATIONS_BY_UID and LOCATIONS_BY_UID[str(a.get("location_uid", ""))].get("parent_oblast_uid") == loc_uid)
             ]
 
             if not target_alerts:

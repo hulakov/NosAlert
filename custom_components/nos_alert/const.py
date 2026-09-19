@@ -23,11 +23,12 @@ def iter_all_locations():
     since districts and hromadas don't store 'type' explicitly in the hierarchy.
     """
     for loc in LOCATIONS:
-        yield loc  # has 'type' field (Область / Місто з спеціальним статусом)
+        # loc itself is an oblast (or city with special status)
+        yield {**loc, "parent_oblast_uid": loc["uid"]}
         for district in loc.get("districts", []):
-            yield {**district, "type": LocationType.RAION}
+            yield {**district, "type": LocationType.RAION, "parent_oblast_uid": loc["uid"]}
             for hromada in district.get("hromadas", []):
-                yield {**hromada, "type": LocationType.HROMADA}
+                yield {**hromada, "type": LocationType.HROMADA, "parent_oblast_uid": loc["uid"]}
 
 
 
@@ -48,13 +49,7 @@ THREAT_DESCRIPTIONS = {
 
 # --- Dynamic dictionary construction from official LOCATIONS database ---
 
-LOCATIONS_BY_UID: dict[str, Any] = {str(loc["uid"]): loc for loc in iter_all_locations()}
-
-LOCATION_UID_MAP: dict[str, str] = {}
-LOCATION_SLUG_MAP: dict[str, str] = {}
-LOCATION_DISPLAY_NAME_MAP: dict[str, str] = {}
-LOCATION_UKR_NAME_MAP: dict[str, str] = {}
-
+LOCATIONS_BY_UID: dict[str, dict[str, Any]] = {}
 
 def _slugify_raw(text: str) -> str:
     """Helper for fallback text slugification."""
@@ -71,68 +66,64 @@ for _loc in iter_all_locations():
     _uid = str(_loc["uid"])
     _name = _loc["name"]
     _name_en = _loc["name_en"]
-    _ltype = _loc["type"]
-
-    # 1. UID mapping
-    LOCATION_UID_MAP[_uid] = _uid
-    LOCATION_UID_MAP[_name.lower()] = _uid
-    LOCATION_UID_MAP[_name_en.lower()] = _uid
-    LOCATION_UKR_NAME_MAP[_uid] = _name
-    # Ensure slug maps to UID for coordinator resolution
     _slug = _slugify_raw(_name_en)
-    LOCATION_UID_MAP[_slug] = _uid
+    
+    LOCATIONS_BY_UID[_uid] = {
+        "uid": _uid,
+        "name": _name,
+        "name_en": _name_en,
+        "slug": _slug,
+        "parent_oblast_uid": str(_loc.get("parent_oblast_uid")),
+        "display_name": _name_en,
+        "name_without_m": re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip(),
+    }
 
-    # 2. Slug mapping
-    _slug = _slugify_raw(_name_en)
-    LOCATION_SLUG_MAP[_uid] = _slug
-    LOCATION_SLUG_MAP[_name.lower()] = _slug
-    LOCATION_SLUG_MAP[_name_en.lower()] = _slug
 
-    # 3. Display name mapping (always English as requested)
-    _display = _name_en
-    LOCATION_DISPLAY_NAME_MAP[_uid] = _display
-    LOCATION_DISPLAY_NAME_MAP[_name.lower()] = _display
-    LOCATION_DISPLAY_NAME_MAP[_name_en.lower()] = _display
-    LOCATION_DISPLAY_NAME_MAP[_slug] = _display
+def resolve_location_uid(location_input: str) -> str:
+    """Resolves any location string (slug, uid, cyrillic, english) to a valid UID."""
+    loc_str = str(location_input).strip()
+    if loc_str in LOCATIONS_BY_UID:
+        return loc_str
+        
+    loc_lower = loc_str.lower()
+    
+    for uid, data in LOCATIONS_BY_UID.items():
+        # Match against slug, english, cyrillic, or stripped cyrillic
+        if loc_lower in (
+            data["slug"], 
+            data["name"].lower(), 
+            data["name_en"].lower(), 
+            data["name_without_m"].lower()
+        ):
+            return uid
+            
+    return loc_str
 
-    # Handle "м. " / "м." stripped titles (e.g. "київ" -> "31")
-    _without_m = re.sub(r"^м\.\s*", "", _name, flags=re.IGNORECASE).strip()
-    if _without_m:
-        LOCATION_UID_MAP[_without_m.lower()] = _uid
-        LOCATION_SLUG_MAP[_without_m.lower()] = _slug
-        LOCATION_DISPLAY_NAME_MAP[_without_m.lower()] = _display
 
-# Extra shorthand aliases
-LOCATION_UID_MAP["крим"] = "29"
-LOCATION_SLUG_MAP["крим"] = "crimea"
-LOCATION_DISPLAY_NAME_MAP["крим"] = "Crimea"
+def get_location_display_name(location_input: str) -> str:
+    """Get clean human-readable display name for location (e.g. 'Kyiv' instead of 'м. Київ')."""
+    uid = resolve_location_uid(location_input)
+    if uid in LOCATIONS_BY_UID:
+        return LOCATIONS_BY_UID[uid]["display_name"]
+    
+    if str(location_input).strip().lower() == "крим":
+        return "Crimea"
+    
+    # Fallback
+    loc_clean = str(location_input).strip()
+    without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
+    return without_m if without_m else loc_clean
 
 
 def slugify_location(location: str) -> str:
     """Convert location name or UID to a clean, standardized English slug for entity IDs."""
+    uid = resolve_location_uid(location)
+    if uid in LOCATIONS_BY_UID:
+        return LOCATIONS_BY_UID[uid]["slug"]
+    
     loc_clean = str(location).strip()
-    loc_lower = loc_clean.lower()
-
-    if loc_lower in LOCATION_SLUG_MAP:
-        return LOCATION_SLUG_MAP[loc_lower]
+    if loc_clean.lower() == "крим":
+        return "crimea"
 
     without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
-    if without_m.lower() in LOCATION_SLUG_MAP:
-        return LOCATION_SLUG_MAP[without_m.lower()]
-
     return _slugify_raw(without_m if without_m else loc_clean)
-
-
-def get_location_display_name(location: str) -> str:
-    """Get clean human-readable display name for location (e.g. 'Kyiv' instead of 'м. Київ')."""
-    loc_clean = str(location).strip()
-    loc_lower = loc_clean.lower()
-
-    if loc_lower in LOCATION_DISPLAY_NAME_MAP:
-        return LOCATION_DISPLAY_NAME_MAP[loc_lower]
-
-    without_m = re.sub(r"^м\.\s*", "", loc_clean, flags=re.IGNORECASE).strip()
-    if without_m.lower() in LOCATION_DISPLAY_NAME_MAP:
-        return LOCATION_DISPLAY_NAME_MAP[without_m.lower()]
-
-    return without_m if without_m else loc_clean
