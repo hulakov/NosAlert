@@ -14,8 +14,8 @@ from .const import (
     CONF_API_TOKEN,
     CONF_LOCATIONS,
     DOMAIN,
-    REGIONS,
 )
+from .locations import LOCATIONS
 
 
 async def validate_api_token(token: str) -> bool:
@@ -66,7 +66,9 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_API_TOKEN): str,
-                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(REGIONS),
+                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(
+                    {loc["name"]: loc["name_en"] for loc in LOCATIONS}
+                ),
             }
         )
 
@@ -123,7 +125,9 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(REGIONS),
+                vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(
+                    {loc["name"]: loc["name_en"] for loc in LOCATIONS}
+                ),
             }
         )
 

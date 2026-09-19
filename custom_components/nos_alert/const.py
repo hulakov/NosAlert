@@ -31,11 +31,7 @@ def iter_all_locations():
             yield {**hromada, "type": LocationType.HROMADA}
 
 
-# Dynamic list of all Oblasts + Crimea + Kyiv + Sevastopol for HA configuration dropdowns
-REGIONS: dict[str, str] = {
-    loc["name"]: loc["name_en"] for loc in LOCATIONS
-    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
-}
+
 
 # Mapping of threat types to human-readable Ukrainian descriptions
 THREAT_DESCRIPTIONS = {
