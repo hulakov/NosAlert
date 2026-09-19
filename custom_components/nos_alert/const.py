@@ -76,6 +76,9 @@ for _loc in iter_all_locations():
     LOCATION_UID_MAP[_uid] = _uid
     LOCATION_UID_MAP[_name.lower()] = _uid
     LOCATION_UID_MAP[_name_en.lower()] = _uid
+    # Ensure slug maps to UID for coordinator resolution
+    _slug = _slugify_raw(_name_en)
+    LOCATION_UID_MAP[_slug] = _uid
 
     # 2. Slug mapping
     _slug = _slugify_raw(_name_en)

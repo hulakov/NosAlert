@@ -19,11 +19,12 @@ from .const import (
     CONF_API_TOKEN,
     CONF_LOCATIONS,
     DOMAIN,
+    LOCATION_SLUG_MAP,
 )
 from .locations import LOCATIONS, LocationType
 
 REGION_OPTIONS = [
-    str(loc["uid"]) for loc in LOCATIONS
+    LOCATION_SLUG_MAP[str(loc["uid"])] for loc in LOCATIONS
     if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
 ]
 
@@ -42,7 +43,7 @@ async def validate_api_token(token: str) -> bool:
 class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for NosAlert."""
 
-    VERSION = 2
+    VERSION = 3
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -76,7 +77,7 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_API_TOKEN): str,
-                vol.Required(CONF_LOCATIONS, default=["31"]): SelectSelector(
+                vol.Required(CONF_LOCATIONS, default=["kyiv"]): SelectSelector(
                     SelectSelectorConfig(
                         options=REGION_OPTIONS,
                         multiple=True,
@@ -136,7 +137,7 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
             )
             return self.async_create_entry(title="", data={})
 
-        current_locations = self.config_entry.data.get(CONF_LOCATIONS, ["31"])
+        current_locations = self.config_entry.data.get(CONF_LOCATIONS, ["kyiv"])
 
         schema = vol.Schema(
             {
