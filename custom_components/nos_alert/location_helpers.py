@@ -75,8 +75,18 @@ def format_location_name(name: str, loc_type: str) -> str:
         
     return clean_name
 
+class NormalizedLocation(TypedDict):
+    """Normalized location data used internally for lookups."""
+    uid: str
+    name: str
+    name_en: str
+    slug: str
+    parent_oblast_uid: str
+    display_name: str
+    name_without_m: str
+
 # Build the main map once at module level
-LOCATIONS_BY_UID: dict[str, dict[str, Any]] = {}
+LOCATIONS_BY_UID: dict[str, NormalizedLocation] = {}
 
 for _loc in iter_all_locations():
     _uid = str(_loc["uid"])
