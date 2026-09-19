@@ -1,66 +1,68 @@
-# NosAlert - Повітряна тривога України в Home Assistant 🚨
+# NosAlert - Ukraine Air Raid Alerts for Home Assistant 🚨
 
-Кастомна інтеграція для **Home Assistant**, яка підключається до офіційного REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) та надає оперативну інформацію про повітряні тривоги та загрози по регіонах України.
+[🇺🇦 Читати українською](README.uk.md)
 
----
-
-## ✨ Особливості
-
-* ⚡ **Оперативність:** Опитування API кожні **7 секунд** (відповідає допустимому ліміту 8–10 запитів/хв).
-* 🗺 **Мульти-регіональність:** Можливість обирати один або декілька регіонів для моніторингу через інтерфейс налаштування.
-* 🌐 **Повна локалізація:** Підтримка української та англійської мов для всіх назв сутностей та станів.
-* 📡 **Текстовий список загроз:** Сенсор активних загроз виводить зрозумілий перелік ("Шахеди/БПЛА", "Крилаті ракети", "Балістика" або "Відсутні").
-* 🔴🟡 **Рівень тривоги:** Окремий сенсор рівня тривоги (Червоний / Жовтий / Спокійно) з динамічними іконками безпеки.
-* 🚨 **Автоматизації:** Сутності з відповідними `device_class` (Safety, Timestamp, Enum, Measurement) для зручного створення автоматизацій та сповіщень.
+A custom integration for **Home Assistant** that connects to the official REST API [alerts.in.ua](https://devs.alerts.in.ua/#documentationgetting_started) to provide real-time information about air raid alerts and threats across regions of Ukraine.
 
 ---
 
-## 📦 Встановлення
+## ✨ Features
 
-### Спосіб 1: Через HACS (Рекомендовано) ⭐️
+* ⚡ **Real-time Updates:** Polls the API every **10 seconds** (respecting the allowed limit of 8–10 requests/min).
+* 🗺 **Multi-regional:** Select one or multiple regions, districts, or hromadas to monitor via the setup UI.
+* 🌐 **Full Localization:** Supports both English and Ukrainian languages for all entity names and states.
+* 📡 **Threat List Sensor:** The active threats sensor outputs a readable list (e.g. "Shahed UAVs", "Cruise Missiles", "Ballistics" or "Clear").
+* 🔴🟡 **Alert Level:** A dedicated alert level sensor (Red / Yellow / Clear) with dynamic safety icons.
+* 🚨 **Automations:** Entities use appropriate `device_class` (Safety, Timestamp, Enum, Measurement) making it easy to create automations and notifications.
 
-1. Відкрийте **HACS** у своєму Home Assistant.
-2. Перейдіть у розділ **Integrations** (Інтеграції).
-3. У правому верхньому кутку натисніть **три крапки** (⋮) ➔ **Custom repositories** (Кастомні репозиторії).
-4. Заповніть поля:
+---
+
+## 📦 Installation
+
+### Method 1: HACS (Recommended) ⭐️
+
+1. Open **HACS** in your Home Assistant.
+2. Navigate to the **Integrations** section.
+3. In the top right corner, click the **three dots** (⋮) ➔ **Custom repositories**.
+4. Fill in the fields:
    * **Repository:** `https://github.com/hulakov/NosAlert`
    * **Category:** `Integration`
-5. Натисніть **Add** (Додати).
-6. Оберіть картку **NosAlert (Повітряна тривога України)** у списку та натисніть **Download** (Завантажити).
-7. **Перезапустіть Home Assistant** (**Параметри** ➔ **Система** ➔ **Перезапустити**).
-8. Перейдіть у **Параметри** ➔ **Пристрої та служби** ➔ **Додати інтеграцію** ➔ знайдіть **NosAlert**.
-9. Введіть ваш API токен від `alerts.in.ua` та оберіть регіони для моніторингу.
+5. Click **Add**.
+6. Select the **NosAlert (Ukraine Air Raid Alerts)** card in the list and click **Download**.
+7. **Restart Home Assistant** (**Settings** ➔ **System** ➔ **Restart**).
+8. Go to **Settings** ➔ **Devices & Services** ➔ **Add Integration** ➔ search for **NosAlert**.
+9. Enter your API token from `alerts.in.ua` and select the regions to monitor.
 
 ---
 
-### Спосіб 2: Ручне встановлення
+### Method 2: Manual Installation
 
-1. Скопіюйте папку [`custom_components/nos_alert`](custom_components/nos_alert) у директорію вашого Home Assistant:
+1. Copy the [`custom_components/nos_alert`](custom_components/nos_alert) folder into your Home Assistant directory:
    ```text
    /config/custom_components/nos_alert/
    ```
-2. Перезапустіть Home Assistant.
-3. Перейдіть у **Параметри** ➔ **Пристрої та служби** ➔ **Додати інтеграцію** ➔ знайдіть **NosAlert**.
+2. Restart Home Assistant.
+3. Go to **Settings** ➔ **Devices & Services** ➔ **Add Integration** ➔ search for **NosAlert**.
 
 ---
 
-## 🧩 Сутності інтеграції (Entities)
+## 🧩 Integration Entities
 
-Для кожного обраного регіону інтеграція створює наступний набір сутностей:
+For each selected region, the integration creates the following set of entities:
 
-| Сутність | Тип | Device Class | Опис / Можливі стани |
+| Entity | Type | Device Class | Description / Possible States |
 |---|---|---|---|
-| `binary_sensor.<region>_air_raid_alert` | Binary Sensor | `safety` | **Статус тривоги** (`Unsafe` / `Safe`) |
-| `sensor.<region>_color` | Sensor | `enum` | **Рівень тривоги** (`Повітряна тривога! (Червоний)`, `Часткова тривога (Жовтий)`, `Спокійно`) |
-| `sensor.<region>_active_threats` | Sensor | — | **Активні загрози** (напр.: *"Шахеди/БПЛА, Крилаті ракети"* або *"Відсутні"*) |
-| `sensor.<region>_threat_count` | Sensor | `measurement` | **Кількість загроз** (числове значення: `0`, `1`, `2`...) |
-| `sensor.<region>_start_time` | Sensor | `timestamp` | **Час початку тривоги** (ISO 8601 дата/час) |
+| `binary_sensor.<region>_air_raid_alert` | Binary Sensor | `safety` | **Alert Status** (`Unsafe` / `Safe`) |
+| `sensor.<region>_color` | Sensor | `enum` | **Alert Level** (`Air Raid Alert! (Red)`, `Partial Alert (Yellow)`, `Clear`) |
+| `sensor.<region>_active_threats` | Sensor | — | **Active Threats** (e.g.: *"Shahed UAVs, Cruise Missiles"* or *"Clear"*) |
+| `sensor.<region>_threat_count` | Sensor | `measurement` | **Threat Count** (numeric value: `0`, `1`, `2`...) |
+| `sensor.<region>_start_time` | Sensor | `timestamp` | **Alert Start Time** (ISO 8601 date/time) |
 
-Додатково в атрибутах сутності (`extra_state_attributes["threats_detail"]`) зберігається повний масив об'єктів з деталями та джерелами повідомлень від API.
+Additionally, the entity attributes (`extra_state_attributes["threats_detail"]`) store a full array of objects containing detailed threat data and source messages from the API.
 
 ---
 
-## 💻 CLI Інструмент
+## 💻 CLI Tool
 
-У репозиторії також наявний автономний Python CLI інструмент для перегляду активних тривог, історії та моніторингу через консоль.
-Документація по роботі з CLI знаходиться у файлі **[`cli/README.md`](cli/README.md)**.
+The repository also includes a standalone Python CLI tool for checking active alerts, history, and monitoring via the console.
+Documentation for the CLI tool can be found in **[`cli/README.md`](cli/README.md)**.
