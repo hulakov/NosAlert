@@ -16,10 +16,16 @@ CONF_LOCATIONS = "locations"
 API_ACTIVE_ALERTS_URL = "https://api.alerts.in.ua/v1/alerts/active.json"
 
 # Dynamic list of all Oblasts + Crimea + Kyiv + Sevastopol for HA configuration dropdowns
-REGIONS: list[str] = [
+_REGIONS_ALL: list[str] = [
     loc["name"] for loc in LOCATIONS
     if loc["type"] in ("Область", "Місто з спеціальним статусом")
 ]
+_PREFERRED_REGION = "Житомирська область"
+REGIONS: list[str] = (
+    [_PREFERRED_REGION] + [r for r in _REGIONS_ALL if r != _PREFERRED_REGION]
+    if _PREFERRED_REGION in _REGIONS_ALL
+    else _REGIONS_ALL
+)
 
 # Mapping of threat types to human-readable Ukrainian descriptions
 THREAT_DESCRIPTIONS = {
