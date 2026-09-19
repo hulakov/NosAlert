@@ -44,7 +44,7 @@
         "name": "Active Threats"
       },
       "affected_regions": {
-        "name": "Affected Regions"
+        "name": "Regions"
       },
       "alert_start_time": {
         "name": "Alert Start Time"
