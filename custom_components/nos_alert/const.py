@@ -9,7 +9,7 @@ except ImportError:
     from locations import LOCATIONS, LocationType
 
 DOMAIN = "nos_alert"
-DEFAULT_SCAN_INTERVAL = 7  # Scan interval in seconds (respects API soft limit of 8-10 req/min)
+DEFAULT_SCAN_INTERVAL = 10  # Scan interval in seconds (respects API soft limit of 8-10 req/min)
 
 CONF_API_TOKEN = "api_token"
 CONF_LOCATIONS = "locations"
