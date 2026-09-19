@@ -84,6 +84,11 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             loc_uid = resolve_location_uid(loc)
             loc_ukr_name = LOCATION_UKR_NAME_MAP.get(loc_uid, loc)
 
+            # Note: alerts.in.ua API has a bug where `location_oblast_uid` for districts
+            # wrongly duplicates the district's own UID instead of the parent Oblast's UID.
+            # To reliably match child districts when an Oblast is selected, we MUST rely
+            # on the text-based fallback matching `location_oblast` against the canonical
+            # Ukrainian name of the location (via LOCATION_UKR_NAME_MAP).
             target_alerts = [
                 a for a in self._cached_alerts_list
                 if str(a.get("location_uid", "")) == loc

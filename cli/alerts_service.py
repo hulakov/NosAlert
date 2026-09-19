@@ -81,6 +81,9 @@ def check_active_alerts(api_token: str, location: str, verbose: bool = False):
         loc_ukr_name = LOCATION_UKR_NAME_MAP.get(target_uid, location)
 
         # Filter alerts for specified location (matching UID, title, or oblast)
+        # Note: alerts.in.ua API has a bug where `location_oblast_uid` for districts
+        # wrongly duplicates the district's own UID instead of the parent Oblast's UID.
+        # We use LOCATION_UKR_NAME_MAP to safely fallback to text-based matching.
         target_alerts = [
             a for a in alerts_list
             if str(a.get("location_uid", "")) == location
@@ -232,6 +235,10 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
             target_uid = resolve_location_uid(location)
             loc_ukr_name = LOCATION_UKR_NAME_MAP.get(target_uid, location)
 
+            # Filter alerts for specified location (matching UID, title, or oblast)
+            # Note: alerts.in.ua API has a bug where `location_oblast_uid` for districts
+            # wrongly duplicates the district's own UID instead of the parent Oblast's UID.
+            # We use LOCATION_UKR_NAME_MAP to safely fallback to text-based matching.
             target_alerts = [
                 a for a in alerts_list
                 if str(a.get("location_uid", "")) == location
