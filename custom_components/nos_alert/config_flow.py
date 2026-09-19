@@ -9,6 +9,7 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.selector import (
+    SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
@@ -24,7 +25,11 @@ from .locations import LOCATIONS, LocationType
 from .location_helpers import slugify_location
 
 REGION_OPTIONS = [
-    slugify_location(loc["name_en"]) for loc in LOCATIONS
+    SelectOptionDict(
+        value=slugify_location(loc["name_en"]),
+        label=loc["name"]
+    )
+    for loc in LOCATIONS
     if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
 ]
 
@@ -82,7 +87,6 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         options=REGION_OPTIONS,
                         multiple=True,
                         mode=SelectSelectorMode.DROPDOWN,
-                        translation_key="locations",
                     )
                 ),
             }
@@ -146,7 +150,6 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
                         options=REGION_OPTIONS,
                         multiple=True,
                         mode=SelectSelectorMode.DROPDOWN,
-                        translation_key="locations",
                     )
                 ),
             }
