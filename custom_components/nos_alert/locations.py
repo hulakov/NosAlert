@@ -15,26 +15,26 @@ class LocationType(StrEnum):
     RAION = "Район"
     HROMADA = "Громада"
 
-class HromadaDict(TypedDict):
+class Hromada(TypedDict):
     uid: int
     name: str
     name_en: str
 
-class DistrictDict(TypedDict):
+class District(TypedDict):
     uid: int
     name: str
     name_en: str
-    hromadas: NotRequired[list[HromadaDict]]
+    hromadas: NotRequired[list[Hromada]]
 
-class LocationDict(TypedDict):
+class Location(TypedDict):
     uid: int
     name: str
     type: LocationType
     name_en: str
-    districts: NotRequired[list[DistrictDict]]
-    hromadas: NotRequired[list[HromadaDict]]
+    districts: NotRequired[list[District]]
+    hromadas: NotRequired[list[Hromada]]
 
-LOCATIONS: list[LocationDict] = [
+LOCATIONS: list[Location] = [
     {
         "uid": 31,
         "name": 'м. Київ',
