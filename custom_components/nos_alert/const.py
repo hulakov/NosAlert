@@ -83,8 +83,8 @@ for _loc in iter_all_locations():
     LOCATION_SLUG_MAP[_name.lower()] = _slug
     LOCATION_SLUG_MAP[_name_en.lower()] = _slug
 
-    # 3. Display name mapping
-    _display = _name_en if _ltype == LocationType.SPECIAL_CITY else _name
+    # 3. Display name mapping (always English as requested)
+    _display = _name_en
     LOCATION_DISPLAY_NAME_MAP[_uid] = _display
     LOCATION_DISPLAY_NAME_MAP[_name.lower()] = _display
     LOCATION_DISPLAY_NAME_MAP[_name_en.lower()] = _display

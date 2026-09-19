@@ -8,6 +8,11 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.selector import (
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .const import (
     API_ACTIVE_ALERTS_URL,
@@ -15,7 +20,12 @@ from .const import (
     CONF_LOCATIONS,
     DOMAIN,
 )
-from .locations import LOCATIONS
+from .locations import LOCATIONS, LocationType
+
+REGION_OPTIONS = [
+    loc["name"] for loc in LOCATIONS
+    if loc["type"] in (LocationType.OBLAST, LocationType.SPECIAL_CITY)
+]
 
 
 async def validate_api_token(token: str) -> bool:
@@ -66,8 +76,13 @@ class NosAlertConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_API_TOKEN): str,
-                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): cv.multi_select(
-                    {loc["name"]: loc["name_en"] for loc in LOCATIONS}
+                vol.Required(CONF_LOCATIONS, default=["м. Київ"]): SelectSelector(
+                    SelectSelectorConfig(
+                        options=REGION_OPTIONS,
+                        multiple=True,
+                        mode=SelectSelectorMode.DROPDOWN,
+                        translation_key="locations",
+                    )
                 ),
             }
         )
@@ -125,8 +140,13 @@ class NosAlertOptionsFlowHandler(config_entries.OptionsFlow):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_LOCATIONS, default=current_locations): cv.multi_select(
-                    {loc["name"]: loc["name_en"] for loc in LOCATIONS}
+                vol.Required(CONF_LOCATIONS, default=current_locations): SelectSelector(
+                    SelectSelectorConfig(
+                        options=REGION_OPTIONS,
+                        multiple=True,
+                        mode=SelectSelectorMode.DROPDOWN,
+                        translation_key="locations",
+                    )
                 ),
             }
         )
