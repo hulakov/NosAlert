@@ -13,7 +13,7 @@ if _const_dir not in sys.path:
     sys.path.insert(0, _const_dir)
 
 from const import THREAT_DESCRIPTIONS
-from location_helpers import LOCATIONS_BY_UID, resolve_location_uid
+from location_registry import location_registry
 
 
 
@@ -72,17 +72,17 @@ def check_active_alerts(api_token: str, location: str, verbose: bool = False):
         raw_data = fetch_api_json(url, api_token)
         alerts_list = raw_data.get("alerts", [])
 
-        target_uid = resolve_location_uid(location)
+        target_uid = location_registry.resolve_location_uid(location)
 
         # Filter alerts for specified location.
-        # We use LOCATIONS_BY_UID because the alerts.in.ua API has a bug where
+        # We use location_registry because the alerts.in.ua API has a bug where
         # `location_oblast_uid` for districts wrongly duplicates the district's own UID.
         target_alerts = [
             a for a in alerts_list
             if str(a.get("location_uid", "")) == location
             or str(a.get("location_uid", "")) == target_uid
             or str(a.get("location_oblast_uid", "")) == target_uid
-            or (str(a.get("location_uid", "")) in LOCATIONS_BY_UID and LOCATIONS_BY_UID[str(a.get("location_uid", ""))].get("parent_oblast_uid") == target_uid)
+            or (location_registry.get(str(a.get("location_uid", ""))) and location_registry.get(str(a.get("location_uid", ""))).parent_location_uid == target_uid)
         ]
 
         if verbose:
@@ -222,17 +222,17 @@ def monitor_alerts(api_token: str, location: str, interval: int = 10, verbose: b
                 time.sleep(interval)
                 continue
 
-            target_uid = resolve_location_uid(location)
+            target_uid = location_registry.resolve_location_uid(location)
 
             # Filter alerts for specified location.
-            # We use LOCATIONS_BY_UID because the alerts.in.ua API has a bug where
+            # We use location_registry because the alerts.in.ua API has a bug where
             # `location_oblast_uid` for districts wrongly duplicates the district's own UID.
             target_alerts = [
                 a for a in alerts_list
                 if str(a.get("location_uid", "")) == location
                 or str(a.get("location_uid", "")) == target_uid
                 or str(a.get("location_oblast_uid", "")) == target_uid
-                or (str(a.get("location_uid", "")) in LOCATIONS_BY_UID and LOCATIONS_BY_UID[str(a.get("location_uid", ""))].get("parent_oblast_uid") == target_uid)
+                or (location_registry.get(str(a.get("location_uid", ""))) and location_registry.get(str(a.get("location_uid", ""))).parent_location_uid == target_uid)
             ]
 
             current_state = {}

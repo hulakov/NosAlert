@@ -1,8 +1,12 @@
 """Location helper functions and types for NosAlert."""
 
 from typing import Iterator
-from .const import LocationType
-from .models import BaseLocation, Hromada, District, Location, _slugify_raw
+try:
+    from .const import LocationType
+    from .models import BaseLocation, Hromada, District, Location, _slugify_raw
+except ImportError:
+    from const import LocationType
+    from models import BaseLocation, Hromada, District, Location, _slugify_raw
 
 class LocationRegistry:
     """Registry encapsulating all administrative locations in Ukraine."""
@@ -41,11 +45,12 @@ class LocationRegistry:
         location_lower = location_str.lower()
         
         for location_uid, location_data in self._locations_by_uid.items():
-            # Match against slug, english or cyrillic
+            # Match against slug, display_name, english or cyrillic name
             if location_lower in (
                 location_data.slug, 
                 location_data.name.lower(), 
-                location_data.name_en.lower()
+                location_data.name_en.lower(),
+                location_data.display_name.lower(),
             ):
                 return location_uid
                 
@@ -72,7 +77,10 @@ class LocationRegistry:
     def all_locations(self) -> dict[str, BaseLocation]:
         return self._locations_by_uid
 
-from .locations_data import LOCATIONS
+try:
+    from .locations_data import LOCATIONS
+except ImportError:
+    from locations_data import LOCATIONS
 
 # Initialize the singleton registry instance
 location_registry = LocationRegistry(LOCATIONS)

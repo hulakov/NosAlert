@@ -1,7 +1,10 @@
 import re
 import unicodedata
 from dataclasses import dataclass, field
-from .const import LocationType
+try:
+    from .const import LocationType
+except ImportError:
+    from const import LocationType
 
 try:
     from homeassistant.util import slugify as ha_slugify
