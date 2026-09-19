@@ -8,12 +8,12 @@ A custom integration for **Home Assistant** that connects to the official REST A
 
 ## ✨ Features
 
-* ⚡ **Real-time Updates:** Polls the API every **10 seconds** (respecting the allowed limit of 8–10 requests/min).
-* 🗺 **Multi-regional:** Select one or multiple regions, districts, or hromadas to monitor via the setup UI.
+* 🗺 **Automatic Sensor Creation:** Automatically creates a comprehensive set of sensors for each region, district, or hromada you choose to monitor.
+* 🔴🟡 **Alert Level Color:** A dedicated sensor clearly shows the current danger level (Red — alert, Yellow — partial alert, Clear) with dynamic safety icons.
+* 📡 **Active Threat List:** The active threats sensor outputs a readable list of exactly what is approaching (e.g., "Shahed UAVs", "Cruise Missiles", "Ballistics").
+* ⚡ **Real-time Updates:** Continuously updates all sensors every **10 seconds**, ensuring the fastest delivery of alerts without exceeding API rate limits (8–10 requests/min).
 * 🌐 **Full Localization:** Supports both English and Ukrainian languages for all entity names and states.
-* 📡 **Threat List Sensor:** The active threats sensor outputs a readable list (e.g. "Shahed UAVs", "Cruise Missiles", "Ballistics" or "Clear").
-* 🔴🟡 **Alert Level:** A dedicated alert level sensor (Red / Yellow / Clear) with dynamic safety icons.
-* 🚨 **Automations:** Entities use appropriate `device_class` (Safety, Timestamp, Enum, Measurement) making it easy to create automations and notifications.
+* 🚨 **Easy Automations:** Entities use appropriate device classes (`device_class`: Safety, Timestamp, Enum, Measurement), making them perfect for triggering your own sirens and notifications.
 
 ---
 
