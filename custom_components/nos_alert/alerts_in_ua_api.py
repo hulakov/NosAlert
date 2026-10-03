@@ -69,18 +69,11 @@ class AlertsInUaClient:
     def _parse_alert(data: dict[str, Any]) -> Alert | None:
         """Convert raw alerts.in.ua alert JSON to Alert (None if the location is unknown to us)."""
         location = location_registry.find_by_uid(data.get("location_uid", ""))
-        if location is None and data.get("location_title"):
-            location = location_registry.find(data["location_title"])
-        if location is None and data.get("location_raion_uid"):
-            location = location_registry.find_by_uid(data["location_raion_uid"])
-        if location is None and data.get("location_oblast_uid"):
-            location = location_registry.find_by_uid(data["location_oblast_uid"])
-
         if location is None:
             _LOGGER.debug(
-                "Skipping alert for unknown location (uid=%s, title=%s)",
-                data.get("location_uid"),
+                "Skipping alert for unknown location: %s (uid=%s)",
                 data.get("location_title"),
+                data.get("location_uid"),
             )
             return None
 
