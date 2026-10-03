@@ -40,6 +40,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if not any(ent.unique_id.startswith(f"nos_alert_{slug}_") for slug in active_slugs):
             _LOGGER.info("Removing stale entity '%s' (%s)", ent.entity_id, ent.unique_id)
             entity_reg.async_remove(ent.entity_id)
+        elif "misto_kiiv" in ent.entity_id:
+            new_entity_id = ent.entity_id.replace("misto_kiiv", "kyiv")
+            if not entity_reg.async_get(new_entity_id):
+                _LOGGER.info("Migrating entity_id from '%s' to '%s'", ent.entity_id, new_entity_id)
+                entity_reg.async_update_entity(ent.entity_id, new_entity_id=new_entity_id)
 
     coordinator = NosAlertDataUpdateCoordinator(
         hass,

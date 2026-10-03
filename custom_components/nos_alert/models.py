@@ -98,7 +98,7 @@ class BaseLocation:
             case LocationType.AUTONOMOUS_REPUBLIC:
                 return f"Автономна Республіка {clean_name}"
             case LocationType.SPECIAL_CITY:
-                return f"місто {clean_name}"
+                return clean_name
             case _:
                 return clean_name
 
