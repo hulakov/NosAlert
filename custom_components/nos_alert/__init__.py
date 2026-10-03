@@ -4,6 +4,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .config_flow import CONF_API_TOKEN, CONF_LOCATIONS
 from .location_registry import location_registry
@@ -21,6 +22,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     locations: list[str] = entry.data.get(CONF_LOCATIONS, ["м. Київ"])
 
     _LOGGER.info("Setting up NosAlert integration for locations: %s", locations)
+
+    # Clean up stale devices and entities removed from options
+    active_slugs = {location_registry.slugify_location(loc) for loc in locations}
+    active_device_identifiers = {(DOMAIN, f"nos_alert_{slug}") for slug in active_slugs}
+
+    device_reg = dr.async_get(hass)
+    devices = dr.async_entries_for_config_entry(device_reg, entry.entry_id)
+    for dev in devices:
+        if not any(ident in active_device_identifiers for ident in dev.identifiers):
+            _LOGGER.info("Removing stale device '%s' (%s)", dev.name, dev.id)
+            device_reg.async_remove_device(dev.id)
+
+    entity_reg = er.async_get(hass)
+    entities = er.async_entries_for_config_entry(entity_reg, entry.entry_id)
+    for ent in entities:
+        if not any(ent.unique_id.startswith(f"nos_alert_{slug}_") for slug in active_slugs):
+            _LOGGER.info("Removing stale entity '%s' (%s)", ent.entity_id, ent.unique_id)
+            entity_reg.async_remove(ent.entity_id)
 
     coordinator = NosAlertDataUpdateCoordinator(
         hass,
