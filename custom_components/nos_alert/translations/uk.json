@@ -54,6 +54,11 @@
       "air_raid_alert": {
         "name": "Статус тривоги"
       }
+    },
+    "button": {
+      "refresh": {
+        "name": "Оновити"
+      }
     }
   }
 }

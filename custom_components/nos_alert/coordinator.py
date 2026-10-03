@@ -1,4 +1,3 @@
-import asyncio
 from datetime import timedelta
 import logging
 import time
@@ -8,7 +7,6 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .alerts_in_ua_api import AlertsInUaClient
-from .ubilling_api import UbillingAlertsClient, UBILLING_SCAN_INTERVAL
 from .location_registry import location_registry
 from .models import DOMAIN, Alert, AlertLevel, LocationAlertStatus, Threat
 
@@ -30,22 +28,9 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
         self.api_token = api_token
         self.locations = locations
         self._cached_alerts: list[Alert] = []
-        self._forced_refresh_reason: str | None = None
 
         session = async_get_clientsession(hass)
         self.alerts_client = AlertsInUaClient(session, api_token)
-        self.ubilling_client = UbillingAlertsClient(session)
-
-        # Fast trigger poller state tracking
-        self._ubilling_active_ids: set[int] | None = None
-        self._ubilling_poller_task: asyncio.Task[None] | None = None
-
-        # Local ids of monitored locations and of the oblasts containing them
-        self._relevant_ids: set[int] = set()
-        for loc in locations:
-            location = location_registry.find(loc)
-            if location:
-                self._relevant_ids.update((location.id, location.parent_id))
 
         super().__init__(
             hass,
@@ -56,13 +41,6 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
 
     async def _async_update_data(self) -> dict[str, LocationAlertStatus]:
         """Fetch alerts from alerts.in.ua and aggregate them per configured location."""
-        is_forced = self._forced_refresh_reason is not None
-        reason = self._forced_refresh_reason
-        self._forced_refresh_reason = None
-
-        if is_forced:
-            _LOGGER.info("⚡ [FORCED REFRESH] Fetching immediate update from alerts.in.ua (reason: %s)", reason)
-
         start_time = time.monotonic()
         try:
             self._cached_alerts = await self.alerts_client.fetch_alerts()
@@ -72,12 +50,11 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
             _LOGGER.warning("Network error fetching NosAlert API data: %s", err)
 
         elapsed = time.monotonic() - start_time
-        if is_forced:
-            _LOGGER.info(
-                "⚡ [FORCED REFRESH COMPLETED] alerts.in.ua responded in %.2fs (%d active alerts)",
-                elapsed,
-                len(self._cached_alerts),
-            )
+        _LOGGER.debug(
+            "alerts.in.ua update completed in %.2fs (%d active alerts)",
+            elapsed,
+            len(self._cached_alerts),
+        )
 
         new_data = {loc: self._build_status(loc) for loc in self.locations}
         self._log_status_changes(new_data)
@@ -197,58 +174,3 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
             source_messages=source_messages,
             affected_locations=affected_locations,
         )
-
-    def start_ubilling_poller(self) -> None:
-        """Start the fast Ubilling polling background task."""
-        if self._ubilling_poller_task is None or self._ubilling_poller_task.done():
-            self._ubilling_poller_task = self.hass.async_create_background_task(
-                self._async_ubilling_poller_loop(),
-                name=f"{DOMAIN}_ubilling_poller",
-            )
-            _LOGGER.debug("Started Ubilling fast trigger poller task")
-
-    def stop_ubilling_poller(self) -> None:
-        """Stop the fast Ubilling polling background task."""
-        if self._ubilling_poller_task and not self._ubilling_poller_task.done():
-            self._ubilling_poller_task.cancel()
-            self._ubilling_poller_task = None
-            _LOGGER.debug("Stopped Ubilling fast trigger poller task")
-
-    async def _async_ubilling_poller_loop(self) -> None:
-        """Poll Ubilling every 2s and force an alerts.in.ua refresh when relevant alert state changes."""
-        while True:
-            try:
-                await asyncio.sleep(UBILLING_SCAN_INTERVAL)
-                alerts = await self.ubilling_client.fetch_alerts()
-                active_ids = {a.location_id for a in alerts} & self._relevant_ids
-
-                if self._ubilling_active_ids is not None and active_ids != self._ubilling_active_ids:
-                    added_ids = active_ids - self._ubilling_active_ids
-                    removed_ids = self._ubilling_active_ids - active_ids
-
-                    added_names = [
-                        location_registry.get(i).display_name
-                        for i in added_ids if location_registry.get(i)
-                    ]
-                    removed_names = [
-                        location_registry.get(i).display_name
-                        for i in removed_ids if location_registry.get(i)
-                    ]
-                    changes = []
-                    if added_names:
-                        changes.append(f"started in {added_names}")
-                    if removed_names:
-                        changes.append(f"cleared in {removed_names}")
-
-                    change_str = ", ".join(changes) if changes else f"{sorted(self._ubilling_active_ids)} -> {sorted(active_ids)}"
-                    self._forced_refresh_reason = change_str
-                    _LOGGER.info(
-                        "⚡ Ubilling fast trigger detected alert state change (%s). Requesting immediate alerts.in.ua refresh!",
-                        change_str,
-                    )
-                    await self.async_request_refresh()
-                self._ubilling_active_ids = active_ids
-            except asyncio.CancelledError:
-                break
-            except Exception as err:
-                _LOGGER.debug("Ubilling fast trigger poller error: %s", err)

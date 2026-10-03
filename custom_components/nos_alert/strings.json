@@ -54,6 +54,11 @@
       "air_raid_alert": {
         "name": "Air Raid Alarm"
       }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh"
+      }
     }
   }
 }
