@@ -70,7 +70,7 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
         display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_color"
-        self._attr_suggested_object = f"nosalert_{self._slug}_color"
+        self._attr_suggested_object_id = f"nosalert_{self._slug}_color"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
             name=f"NosAlert {display_name}",
@@ -136,7 +136,7 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
         display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_active_threats"
-        self._attr_suggested_object = f"nosalert_{self._slug}_active_threats"
+        self._attr_suggested_object_id = f"nosalert_{self._slug}_active_threats"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
             name=f"NosAlert {display_name}",
@@ -189,7 +189,7 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
         display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_start_time"
-        self._attr_suggested_object = f"nosalert_{self._slug}_start_time"
+        self._attr_suggested_object_id = f"nosalert_{self._slug}_start_time"
         self._attr_icon = "mdi:clock-alert-outline"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
@@ -229,7 +229,7 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
         display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_affected_regions"
-        self._attr_suggested_object = f"nosalert_{self._slug}_affected_regions"
+        self._attr_suggested_object_id = f"nosalert_{self._slug}_affected_regions"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
             name=f"NosAlert {display_name}",

@@ -56,7 +56,7 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
         display_name = location_registry.get_location_display_name(location)
 
         self._attr_unique_id = f"nos_alert_{self._slug}_alert"
-        self._attr_suggested_object = f"nosalert_{self._slug}_alert"
+        self._attr_suggested_object_id = f"nosalert_{self._slug}_alert"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"nos_alert_{self._slug}")},
             name=f"NosAlert {display_name}",
