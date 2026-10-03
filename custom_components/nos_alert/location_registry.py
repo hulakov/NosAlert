@@ -48,8 +48,17 @@ class LocationRegistry:
         return None
 
     def find_by_uid(self, uid: str | int) -> BaseLocation | None:
-        """Get location by external alerts.in.ua uid."""
-        return self._by_uid.get(str(uid))
+        """Get location by external alerts.in.ua uid (supporting 5000+ city uids)."""
+        res = self._by_uid.get(str(uid))
+        if res is not None:
+            return res
+        try:
+            num = int(uid)
+            if num >= 5000:
+                return self._by_uid.get(str(num - 5000))
+        except (ValueError, TypeError):
+            pass
+        return None
 
     def find(self, name_or_uid: str) -> BaseLocation | None:
         """Find a location by uid, slug, or Ukrainian/English name (optionally prefixed with 'м.')."""
