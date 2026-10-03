@@ -1,6 +1,7 @@
 import asyncio
 from datetime import timedelta
 import logging
+import time
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -29,6 +30,7 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
         self.api_token = api_token
         self.locations = locations
         self._cached_alerts: list[Alert] = []
+        self._forced_refresh_reason: str | None = None
 
         session = async_get_clientsession(hass)
         self.alerts_client = AlertsInUaClient(session, api_token)
@@ -54,12 +56,28 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
 
     async def _async_update_data(self) -> dict[str, LocationAlertStatus]:
         """Fetch alerts from alerts.in.ua and aggregate them per configured location."""
+        is_forced = self._forced_refresh_reason is not None
+        reason = self._forced_refresh_reason
+        self._forced_refresh_reason = None
+
+        if is_forced:
+            _LOGGER.info("⚡ [FORCED REFRESH] Fetching immediate update from alerts.in.ua (reason: %s)", reason)
+
+        start_time = time.monotonic()
         try:
             self._cached_alerts = await self.alerts_client.fetch_alerts()
         except Exception as err:
             if not self._cached_alerts:
                 raise UpdateFailed(f"Error communicating with NosAlert API: {err}") from err
             _LOGGER.warning("Network error fetching NosAlert API data: %s", err)
+
+        elapsed = time.monotonic() - start_time
+        if is_forced:
+            _LOGGER.info(
+                "⚡ [FORCED REFRESH COMPLETED] alerts.in.ua responded in %.2fs (%d active alerts)",
+                elapsed,
+                len(self._cached_alerts),
+            )
 
         new_data = {loc: self._build_status(loc) for loc in self.locations}
         self._log_status_changes(new_data)
@@ -216,16 +234,17 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
                         location_registry.get(i).display_name
                         for i in removed_ids if location_registry.get(i)
                     ]
-
                     changes = []
                     if added_names:
                         changes.append(f"started in {added_names}")
                     if removed_names:
                         changes.append(f"cleared in {removed_names}")
 
+                    change_str = ", ".join(changes) if changes else f"{sorted(self._ubilling_active_ids)} -> {sorted(active_ids)}"
+                    self._forced_refresh_reason = change_str
                     _LOGGER.info(
                         "⚡ Ubilling fast trigger detected alert state change (%s). Requesting immediate alerts.in.ua refresh!",
-                        ", ".join(changes) if changes else f"{sorted(self._ubilling_active_ids)} -> {sorted(active_ids)}",
+                        change_str,
                     )
                     await self.async_request_refresh()
                 self._ubilling_active_ids = active_ids
