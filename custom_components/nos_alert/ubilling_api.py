@@ -6,8 +6,8 @@ import aiohttp
 from .location_registry import location_registry
 from .models import Alert
 
-API_UBILLING_ALERTS_URL = "https://ubilling.net.ua/aerialalerts/"
-UBILLING_SCAN_INTERVAL = 1  # Scan interval in seconds for fast trigger Ubilling API
+API_UBILLING_ALERTS_URL = "https://ubilling.net.ua/aerialalerts/?source=ual"
+UBILLING_SCAN_INTERVAL = 1  # Scan interval in seconds for fast trigger Ubilling API (source=ual)
 
 _LOGGER = logging.getLogger(__name__)
 
