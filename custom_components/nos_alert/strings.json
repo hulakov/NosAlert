@@ -35,7 +35,7 @@
       "alert_color": {
         "name": "Alert Severity Level",
         "state": {
-          "none": "Clear",
+          "none": "Safe",
           "yellow": "Yellow",
           "red": "Red"
         }
