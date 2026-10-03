@@ -1,28 +1,22 @@
-"""DataUpdateCoordinator for NosAlert Home Assistant integration."""
-
+import asyncio
 from datetime import timedelta
 import logging
-from typing import Any
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import (
-    API_ACTIVE_ALERTS_URL,
-    DEFAULT_SCAN_INTERVAL,
-    DOMAIN,
-    THREAT_DESCRIPTIONS,
-)
+from .alerts_in_ua_api import AlertsInUaClient
+from .ubilling_api import UbillingAlertsClient, UBILLING_SCAN_INTERVAL
 from .location_registry import location_registry
+from .models import DOMAIN, Alert, AlertLevel, LocationAlertStatus, Threat
+
+DEFAULT_SCAN_INTERVAL = 10  # Scan interval in seconds for alerts.in.ua API (respects soft limit of 8-10 req/min)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-
-
-
-class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAlertStatus]]):
     """Class to manage fetching NosAlert data from official API."""
 
     def __init__(
@@ -34,8 +28,22 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Initialize the coordinator."""
         self.api_token = api_token
         self.locations = locations
-        self._last_modified: str | None = None
-        self._cached_alerts_list: list[dict[str, Any]] = []
+        self._cached_alerts: list[Alert] = []
+
+        session = async_get_clientsession(hass)
+        self.alerts_client = AlertsInUaClient(session, api_token)
+        self.ubilling_client = UbillingAlertsClient(session)
+
+        # Fast trigger poller state tracking
+        self._ubilling_active_ids: set[int] | None = None
+        self._ubilling_poller_task: asyncio.Task[None] | None = None
+
+        # Local ids of monitored locations and of the oblasts containing them
+        self._relevant_ids: set[int] = set()
+        for loc in locations:
+            location = location_registry.find(loc)
+            if location:
+                self._relevant_ids.update((location.id, location.parent_id))
 
         super().__init__(
             hass,
@@ -44,121 +52,97 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
 
-    async def _async_update_data(self) -> dict[str, Any]:
-        """Fetch data from API using aiohttp session with caching support."""
-        session = async_get_clientsession(self.hass)
-        headers = {
-            "Authorization": f"Bearer {self.api_token}",
-        }
-        if self._last_modified:
-            headers["If-Modified-Since"] = self._last_modified
-
+    async def _async_update_data(self) -> dict[str, LocationAlertStatus]:
+        """Fetch alerts from alerts.in.ua and aggregate them per configured location."""
         try:
-            async with session.get(API_ACTIVE_ALERTS_URL, headers=headers) as response:
-                if response.status == 304:
-                    _LOGGER.debug("API returned 304 Not Modified; using cached alerts data")
-                elif response.status == 200:
-                    if "Last-Modified" in response.headers:
-                        self._last_modified = response.headers["Last-Modified"]
-                    data = await response.json()
-                    self._cached_alerts_list = data.get("alerts", [])
-                else:
-                    _LOGGER.error("NosAlert API error: HTTP status %s", response.status)
-                    raise UpdateFailed(f"HTTP error status {response.status}")
+            self._cached_alerts = await self.alerts_client.fetch_alerts()
         except Exception as err:
-            if not self._cached_alerts_list and not isinstance(err, UpdateFailed):
+            if not self._cached_alerts:
                 raise UpdateFailed(f"Error communicating with NosAlert API: {err}") from err
             _LOGGER.warning("Network error fetching NosAlert API data: %s", err)
 
-        # Parse alerts data for each configured location
-        result: dict[str, Any] = {}
+        return {loc: self._build_status(loc) for loc in self.locations}
 
-        for loc in self.locations:
-            loc_uid = location_registry.resolve_location_uid(loc)
+    def _build_status(self, loc: str) -> LocationAlertStatus:
+        """Aggregate cached alerts for a single configured location."""
+        monitored = location_registry.find(loc)
+        if monitored is None:
+            return LocationAlertStatus(location=loc)
 
-            # Filter alerts for specified location.
-            # We use LOCATIONS_BY_UID because the alerts.in.ua API has a bug where
-            # `location_oblast_uid` for districts wrongly duplicates the district's own UID.
-            target_alerts = [
-                a for a in self._cached_alerts_list
-                if str(a.get("location_uid", "")) == loc
-                or str(a.get("location_uid", "")) == loc_uid
-                or str(a.get("location_oblast_uid", "")) == loc_uid
-                or (location_registry.get(str(a.get("location_uid", ""))) and location_registry.get(str(a.get("location_uid", ""))).parent_location_uid == loc_uid)
-            ]
+        alerts = [
+            a for a in self._cached_alerts
+            if a.location_id == monitored.id
+            or location_registry.get(a.location_id).parent_id == monitored.id
+        ]
+        if not alerts:
+            return LocationAlertStatus(location=loc)
 
-            if not target_alerts:
-                result[loc] = {
-                    "alert_level": "none",
-                    "is_active": False,
-                    "alert_type": None,
-                    "started_at": None,
-                    "threats_count": 0,
-                    "threats": [],
-                    "source_messages": [],
-                    "affected_locations": [],
-                }
-                continue
+        if any(a.level == AlertLevel.RED for a in alerts):
+            level = AlertLevel.RED
+        elif any(a.level == AlertLevel.YELLOW for a in alerts):
+            level = AlertLevel.YELLOW
+        else:
+            level = AlertLevel.RED
 
-            has_red = any(a.get("alert_level") == "red" for a in target_alerts)
-            has_yellow = any(a.get("alert_level") == "yellow" for a in target_alerts)
+        start_times = [a.started_at for a in alerts if a.started_at]
 
-            if has_red:
-                overall_level = "red"
-            elif has_yellow:
-                overall_level = "yellow"
-            else:
-                overall_level = "red"
+        threats: list[Threat] = [t for a in alerts for t in a.threats]
+        source_messages = [t.source_message for t in threats if t.source_message]
 
-            # Gather earliest started_at timestamp
-            start_times = [a.get("started_at") for a in target_alerts if a.get("started_at")]
-            earliest_start = min(start_times) if start_times else None
+        affected_locations: list[str] = []
+        for alert in alerts:
+            alert_loc = location_registry.get(alert.location_id)
+            circle = "🔴" if alert.level == AlertLevel.RED else "🟡"
+            # No space between circle and name to guarantee they stay together
+            loc_display = f"{circle}{alert_loc.name}"
+            if loc_display not in affected_locations:
+                affected_locations.append(loc_display)
+        affected_locations.sort(key=lambda x: x.lstrip("🔴🟡 \xa0"))
 
-            # Collect detailed threats
-            all_threats = []
-            source_messages = []
-            for alert in target_alerts:
-                for threat in alert.get("threats") or []:
-                    t_type = threat.get("threat_type", "unknown")
-                    t_desc = THREAT_DESCRIPTIONS.get(t_type, f"❓ {t_type}")
-                    threat_item = {
-                        "threat_type": t_type,
-                        "description": t_desc,
-                        "level": threat.get("level", "yellow"),
-                        "source_message": threat.get("source_message", ""),
-                        "started_at": threat.get("started_at"),
-                    }
-                    all_threats.append(threat_item)
-                    if threat.get("source_message"):
-                        source_messages.append(threat.get("source_message"))
+        return LocationAlertStatus(
+            location=loc,
+            alert_level=level,
+            is_active=True,
+            alert_type=alerts[0].type,
+            started_at=min(start_times) if start_times else None,
+            threats=threats,
+            source_messages=source_messages,
+            affected_locations=affected_locations,
+        )
 
-            # Collect affected locations
-            affected_locations = []
-            for alert in target_alerts:
-                alert_loc_uid = str(alert.get("location_uid", ""))
-                alert_loc = location_registry.get(alert_loc_uid)
-                if alert_loc:
-                    loc_name = alert_loc.name
-                    if loc_name:
-                        alert_level = alert.get("alert_level", "red")
-                        circle = "🔴" if alert_level == "red" else "🟡"
-                        # No space between circle and name to guarantee they stay together
-                        loc_display = f"{circle}{loc_name}"
-                        if loc_display not in affected_locations:
-                            affected_locations.append(loc_display)
-            
-            # Sort them alphabetically for better readability
-            affected_locations.sort(key=lambda x: x.lstrip("🔴🟡 \xa0"))
+    def start_ubilling_poller(self) -> None:
+        """Start the fast Ubilling polling background task."""
+        if self._ubilling_poller_task is None or self._ubilling_poller_task.done():
+            self._ubilling_poller_task = self.hass.async_create_background_task(
+                self._async_ubilling_poller_loop(),
+                name=f"{DOMAIN}_ubilling_poller",
+            )
+            _LOGGER.debug("Started Ubilling fast trigger poller task")
 
-            result[loc] = {
-                "alert_level": overall_level,
-                "is_active": True,
-                "alert_type": target_alerts[0].get("alert_type", "air_raid"),
-                "started_at": earliest_start,
-                "threats_count": len(all_threats),
-                "threats": all_threats,
-                "source_messages": source_messages,
-                "affected_locations": affected_locations,
-            }
+    def stop_ubilling_poller(self) -> None:
+        """Stop the fast Ubilling polling background task."""
+        if self._ubilling_poller_task and not self._ubilling_poller_task.done():
+            self._ubilling_poller_task.cancel()
+            self._ubilling_poller_task = None
+            _LOGGER.debug("Stopped Ubilling fast trigger poller task")
 
-        return result
+    async def _async_ubilling_poller_loop(self) -> None:
+        """Poll Ubilling every 2s and force an alerts.in.ua refresh when relevant alert state changes."""
+        while True:
+            try:
+                await asyncio.sleep(UBILLING_SCAN_INTERVAL)
+                alerts = await self.ubilling_client.fetch_alerts()
+                active_ids = {a.location_id for a in alerts} & self._relevant_ids
+
+                if self._ubilling_active_ids is not None and active_ids != self._ubilling_active_ids:
+                    _LOGGER.info(
+                        "Ubilling API detected alert state change: %s -> %s. Requesting immediate alerts.in.ua refresh!",
+                        sorted(self._ubilling_active_ids),
+                        sorted(active_ids),
+                    )
+                    await self.async_request_refresh()
+                self._ubilling_active_ids = active_ids
+            except asyncio.CancelledError:
+                break
+            except Exception as err:
+                _LOGGER.debug("Ubilling fast trigger poller error: %s", err)

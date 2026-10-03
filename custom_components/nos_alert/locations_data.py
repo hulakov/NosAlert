@@ -1,9 +1,4 @@
-try:
-    from .const import LocationType
-    from .models import Location, District, Hromada
-except ImportError:
-    from const import LocationType
-    from models import Location, District, Hromada
+from .models import District, Hromada, Location, LocationType
 
 LOCATIONS: list[Location] = [
     Location(

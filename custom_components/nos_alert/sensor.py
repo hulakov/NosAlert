@@ -1,5 +1,6 @@
 """Sensor platform for NosAlert Home Assistant integration."""
 
+from dataclasses import asdict
 from datetime import datetime
 import logging
 from typing import Any
@@ -16,11 +17,18 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-from .const import CONF_LOCATIONS, DOMAIN
 from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
+from .models import DOMAIN, AlertLevel, LocationAlertStatus
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _status(coordinator: NosAlertDataUpdateCoordinator, location: str) -> LocationAlertStatus:
+    """Return current alert status for a location (empty status if no data yet)."""
+    if coordinator.data and location in coordinator.data:
+        return coordinator.data[location]
+    return LocationAlertStatus(location=location)
 
 
 async def async_setup_entry(
@@ -30,11 +38,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up NosAlert sensor entities from config entry."""
     coordinator: NosAlertDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    locations: list[str] = entry.data.get(CONF_LOCATIONS, ["м. Київ"])
 
     entities: list[SensorEntity] = []
 
-    for loc in locations:
+    for loc in coordinator.locations:
         entities.append(NosAlertColorSensor(coordinator, loc))
         entities.append(NosAlertThreatsSensor(coordinator, loc))
         entities.append(NosAlertAffectedRegionsSensor(coordinator, loc))
@@ -49,7 +56,7 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
     _attr_has_entity_name = True
     _attr_translation_key = "alert_color"
     _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = ["none", "yellow", "red"]
+    _attr_options = [AlertLevel.NONE.value, AlertLevel.YELLOW.value, AlertLevel.RED.value]
 
     def __init__(
         self,
@@ -74,38 +81,37 @@ class NosAlertColorSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Sens
     @property
     def native_value(self) -> str:
         """Return the state option of the sensor (red, yellow, none)."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        return loc_data.get("alert_level", "none")
+        return _status(self.coordinator, self.location).alert_level.value
 
     @property
     def icon(self) -> str:
         """Return dynamic icon based on alert severity."""
         state = self.native_value
-        if state == "red":
+        if state == AlertLevel.RED:
             return "mdi:shield-alert"
-        elif state == "yellow":
+        elif state == AlertLevel.YELLOW:
             return "mdi:shield-alert-outline"
         return "mdi:shield-check"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return detailed state attributes including threats array."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        status = _status(self.coordinator, self.location)
         state = self.native_value
-        if state == "red":
+        if state == AlertLevel.RED:
             icon_color = "red"
-        elif state == "yellow":
+        elif state == AlertLevel.YELLOW:
             icon_color = "amber"
         else:
             icon_color = "green"
 
         return {
             "location_title": self.location,
-            "alert_type": loc_data.get("alert_type"),
-            "started_at": loc_data.get("started_at"),
-            "threats_count": loc_data.get("threats_count", 0),
-            "threats": loc_data.get("threats", []),
-            "source_messages": loc_data.get("source_messages", []),
+            "alert_type": status.alert_type.value if status.alert_type else None,
+            "started_at": status.started_at,
+            "threats_count": status.threats_count,
+            "threats": [asdict(t) for t in status.threats],
+            "source_messages": status.source_messages,
             "icon_color": icon_color,
         }
 
@@ -141,30 +147,26 @@ class NosAlertThreatsSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Se
     @property
     def native_value(self) -> str:
         """Return human readable active threats string."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        if not loc_data.get("is_active"):
+        status = _status(self.coordinator, self.location)
+        if not status.is_active:
             return "Відсутні"
 
-        threats = loc_data.get("threats", [])
-        if threats:
-            descs = list(dict.fromkeys([t.get("description") for t in threats if t.get("description")]))
-            if descs:
-                return ", ".join(descs)
+        descs = list(dict.fromkeys(t.description for t in status.threats if t.description))
+        if descs:
+            return ", ".join(descs)
 
         return "Повітряна тривога"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return active threats details."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        threats = loc_data.get("threats", [])
-        is_active = loc_data.get("is_active", False)
+        status = _status(self.coordinator, self.location)
         return {
-            "threats_count": len(threats),
-            "threats_list": [t.get("description") for t in threats if t.get("description")],
-            "source_messages": loc_data.get("source_messages", []),
-            "threats_detail": threats,
-            "icon_color": "red" if is_active else "green",
+            "threats_count": status.threats_count,
+            "threats_list": [t.description for t in status.threats if t.description],
+            "source_messages": status.source_messages,
+            "threats_detail": [asdict(t) for t in status.threats],
+            "icon_color": "red" if status.is_active else "green",
         }
 
 
@@ -199,8 +201,7 @@ class NosAlertStartTimeSensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], 
     @property
     def native_value(self) -> datetime | None:
         """Return the start timestamp as datetime object."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        started_at = loc_data.get("started_at")
+        started_at = _status(self.coordinator, self.location).started_at
         if not started_at:
             return None
         try:
@@ -239,11 +240,11 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
     @property
     def native_value(self) -> str:
         """Return human readable affected regions string."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        if not loc_data.get("is_active"):
+        status = _status(self.coordinator, self.location)
+        if not status.is_active:
             return "Відсутні"
 
-        affected = loc_data.get("affected_locations", [])
+        affected = status.affected_locations
         if affected:
             # Join with comma and space
             val = ", ".join(affected)
@@ -257,7 +258,6 @@ class NosAlertAffectedRegionsSensor(CoordinatorEntity[NosAlertDataUpdateCoordina
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return full list of affected regions in attributes to bypass 255 char limit."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
         return {
-            "regions": loc_data.get("affected_locations", [])
+            "regions": _status(self.coordinator, self.location).affected_locations
         }

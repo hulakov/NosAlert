@@ -5,9 +5,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_API_TOKEN, CONF_LOCATIONS, DOMAIN
+from .config_flow import CONF_API_TOKEN, CONF_LOCATIONS
 from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
+from .models import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +28,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await coordinator.async_config_entry_first_refresh()
 
+    coordinator.start_ubilling_poller()
+
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -38,6 +41,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    coordinator: NosAlertDataUpdateCoordinator | None = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if coordinator:
+        coordinator.stop_ubilling_poller()
+
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
 
@@ -59,12 +66,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         new_locations = []
         
         for old_val in old_locations:
-            uid = location_registry.resolve_location_uid(old_val)
-            loc = location_registry.get(uid)
-            if loc:
-                new_locations.append(loc.slug)
-            else:
-                new_locations.append(old_val)
+            loc = location_registry.find(old_val)
+            new_locations.append(loc.slug if loc else old_val)
         
         new_data[CONF_LOCATIONS] = new_locations
         hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)

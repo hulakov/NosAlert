@@ -18,21 +18,19 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
-from .const import (
-    API_ACTIVE_ALERTS_URL,
-    CONF_API_TOKEN,
-    CONF_LOCATIONS,
-    DOMAIN,
-)
-from .const import LocationType
+from .alerts_in_ua_api import API_ACTIVE_ALERTS_URL
 from .location_registry import location_registry
+from .models import DOMAIN, LocationType
+
+CONF_API_TOKEN = "api_token"
+CONF_LOCATIONS = "locations"
 
 REGION_OPTIONS = [
     SelectOptionDict(
         value=loc.slug,
         label=loc.display_name
     )
-    for loc in location_registry.all_locations.values()
+    for loc in location_registry.all_locations
     if loc.type in (LocationType.OBLAST, LocationType.SPECIAL_CITY, LocationType.AUTONOMOUS_REPUBLIC)
 ]
 

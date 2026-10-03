@@ -14,9 +14,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
-from .const import CONF_LOCATIONS, DOMAIN
 from .location_registry import location_registry
 from .coordinator import NosAlertDataUpdateCoordinator
+from .models import DOMAIN, LocationAlertStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,11 +28,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up NosAlert binary sensor entities from config entry."""
     coordinator: NosAlertDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    locations: list[str] = entry.data.get(CONF_LOCATIONS, ["м. Київ"])
 
     entities: list[BinarySensorEntity] = []
 
-    for loc in locations:
+    for loc in coordinator.locations:
         entities.append(NosAlertBinarySensor(coordinator, loc))
 
     async_add_entities(entities)
@@ -68,8 +67,13 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
     @property
     def is_on(self) -> bool:
         """Return True if an alert (red or yellow) is active."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
-        return loc_data.get("is_active", False)
+        return self._status.is_active
+
+    @property
+    def _status(self) -> LocationAlertStatus:
+        if self.coordinator.data and self.location in self.coordinator.data:
+            return self.coordinator.data[self.location]
+        return LocationAlertStatus(location=self.location)
 
     @property
     def icon(self) -> str:
@@ -79,11 +83,11 @@ class NosAlertBinarySensor(CoordinatorEntity[NosAlertDataUpdateCoordinator], Bin
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return extra attributes."""
-        loc_data = self.coordinator.data.get(self.location, {}) if self.coordinator.data else {}
+        status = self._status
         return {
             "location_title": self.location,
-            "alert_level": loc_data.get("alert_level", "none"),
-            "threats_count": loc_data.get("threats_count", 0),
+            "alert_level": status.alert_level.value,
+            "threats_count": status.threats_count,
             "icon_color": "red" if self.is_on else "green",
         }
 

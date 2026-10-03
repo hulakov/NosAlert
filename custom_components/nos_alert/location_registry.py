@@ -1,86 +1,86 @@
 """Location helper functions and types for NosAlert."""
 
 from typing import Iterator
-try:
-    from .const import LocationType
-    from .models import BaseLocation, Hromada, District, Location, _slugify_raw
-except ImportError:
-    from const import LocationType
-    from models import BaseLocation, Hromada, District, Location, _slugify_raw
+
+from .locations_data import LOCATIONS
+from .models import BaseLocation, Location, LocationType, _slugify_raw
+
 
 class LocationRegistry:
-    """Registry encapsulating all administrative locations in Ukraine."""
+    """Registry encapsulating all administrative locations in Ukraine.
+
+    Every location gets a local `id` equal to its ordinal number in the registry.
+    API clients match their own identifiers to these ids, so the rest of the
+    integration never deals with provider-specific uids.
+    """
 
     def __init__(self, raw_locations: list[Location]):
-        self._locations_by_uid: dict[str, BaseLocation] = {}
+        self._locations: list[BaseLocation] = []
+        self._by_uid: dict[str, BaseLocation] = {}
         for loc in self._iter_all_locations(raw_locations):
-            self._locations_by_uid[str(loc.uid)] = loc
+            loc.id = len(self._locations)
+            self._locations.append(loc)
+            self._by_uid[str(loc.uid)] = loc
+
+        # Parents are always registered before their children, so ids are known by now.
+        for oblast in raw_locations:
+            oblast.parent_id = oblast.id
+            for district in oblast.districts:
+                district.parent_id = oblast.id
+                for hromada in district.hromadas:
+                    hromada.parent_id = oblast.id
 
     def _iter_all_locations(self, locations: list[Location]) -> Iterator[BaseLocation]:
-        """Yield all location objects (oblast, district, hromada) with injected parent UIDs and types."""
+        """Yield all location objects (oblast, district, hromada) with injected types."""
         for loc in locations:
-            # loc itself is an oblast (or city with special status)
-            loc.parent_location_uid = str(loc.uid)
             yield loc
-            
             for district in loc.districts:
                 district.type = LocationType.RAION
-                district.parent_location_uid = str(loc.uid)
                 yield district
-                
                 for hromada in district.hromadas:
                     hromada.type = LocationType.HROMADA
-                    hromada.parent_location_uid = str(loc.uid)
                     yield hromada
 
-    def get(self, location_uid: str) -> BaseLocation | None:
-        return self._locations_by_uid.get(str(location_uid))
+    def get(self, location_id: int) -> BaseLocation | None:
+        """Get location by local id."""
+        if 0 <= location_id < len(self._locations):
+            return self._locations[location_id]
+        return None
 
-    def resolve_location_uid(self, location_name_or_uid: str) -> str:
-        """Resolves any location string (slug, uid, cyrillic, english) to a valid UID."""
-        location_str = str(location_name_or_uid).strip()
-        if location_str in self._locations_by_uid:
-            return location_str
-            
-        location_lower = location_str.lower()
-        
-        for location_uid, location_data in self._locations_by_uid.items():
-            # Match against slug, display_name, english or cyrillic name
-            if location_lower in (
-                location_data.slug, 
-                location_data.name.lower(), 
-                location_data.name_en.lower(),
-                location_data.display_name.lower(),
-            ):
-                return location_uid
-                
-        return location_str
+    def find_by_uid(self, uid: str | int) -> BaseLocation | None:
+        """Get location by external alerts.in.ua uid."""
+        return self._by_uid.get(str(uid))
 
-    def get_location_display_name(self, location_name_or_uid: str) -> str:
-        """Get clean human-readable display name for location in Ukrainian (e.g. 'Київ', 'Вінницька область')."""
-        location_uid = self.resolve_location_uid(location_name_or_uid)
-        if location_uid in self._locations_by_uid:
-            return self._locations_by_uid[location_uid].display_name
-        # Fallback
-        return str(location_name_or_uid).strip()
+    def find(self, name_or_uid: str) -> BaseLocation | None:
+        """Find a location by uid, slug, or Ukrainian/English name (optionally prefixed with 'м.')."""
+        text = str(name_or_uid).strip()
+        if text in self._by_uid:
+            return self._by_uid[text]
 
-    def slugify_location(self, location_name_or_uid: str) -> str:
+        text = text.lower()
+        if text.startswith("м."):
+            text = text[2:].strip()
+
+        for loc in self._locations:
+            if text in (loc.slug, loc.name.lower(), loc.name_en.lower(), loc.display_name.lower()):
+                return loc
+        return None
+
+    def get_location_display_name(self, name_or_uid: str) -> str:
+        """Get clean human-readable display name for location in Ukrainian (e.g. 'місто Київ', 'Вінницька область')."""
+        loc = self.find(name_or_uid)
+        return loc.display_name if loc else str(name_or_uid).strip()
+
+    def slugify_location(self, name_or_uid: str) -> str:
         """Convert location name or UID to a clean, standardized English slug for entity IDs."""
-        location_uid = self.resolve_location_uid(location_name_or_uid)
-        if location_uid in self._locations_by_uid:
-            return self._locations_by_uid[location_uid].slug
-        
-        location_clean = str(location_name_or_uid).strip()
-        return _slugify_raw(location_clean)
-        
-    @property
-    def all_locations(self) -> dict[str, BaseLocation]:
-        return self._locations_by_uid
+        loc = self.find(name_or_uid)
+        return loc.slug if loc else _slugify_raw(str(name_or_uid).strip())
 
-try:
-    from .locations_data import LOCATIONS
-except ImportError:
-    from locations_data import LOCATIONS
+    @property
+    def all_locations(self) -> list[BaseLocation]:
+        return self._locations
+
 
 # Initialize the singleton registry instance
 location_registry = LocationRegistry(LOCATIONS)
+
