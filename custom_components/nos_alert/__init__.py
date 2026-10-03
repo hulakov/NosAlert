@@ -20,6 +20,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     api_token: str = entry.data[CONF_API_TOKEN]
     locations: list[str] = entry.data.get(CONF_LOCATIONS, ["м. Київ"])
 
+    _LOGGER.info("Setting up NosAlert integration for locations: %s", locations)
+
     coordinator = NosAlertDataUpdateCoordinator(
         hass,
         api_token=api_token,
@@ -36,11 +38,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
+    _LOGGER.info("NosAlert setup completed successfully for locations: %s", locations)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    _LOGGER.info("Unloading NosAlert integration entry %s", entry.entry_id)
     coordinator: NosAlertDataUpdateCoordinator | None = hass.data.get(DOMAIN, {}).get(entry.entry_id)
     if coordinator:
         coordinator.stop_ubilling_poller()

@@ -61,7 +61,77 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
                 raise UpdateFailed(f"Error communicating with NosAlert API: {err}") from err
             _LOGGER.warning("Network error fetching NosAlert API data: %s", err)
 
-        return {loc: self._build_status(loc) for loc in self.locations}
+        new_data = {loc: self._build_status(loc) for loc in self.locations}
+        self._log_status_changes(new_data)
+        return new_data
+
+    def _log_status_changes(self, new_data: dict[str, LocationAlertStatus]) -> None:
+        """Log significant alert, severity, threat, or affected regions changes."""
+        if not self.data:
+            for loc, status in new_data.items():
+                if status.is_active:
+                    threat_names = [t.description for t in status.threats]
+                    _LOGGER.info(
+                        "Initial alert status for '%s': ACTIVE (level=%s, threats=%d: %s)",
+                        loc,
+                        status.alert_level.value,
+                        status.threats_count,
+                        threat_names or "none",
+                    )
+                else:
+                    _LOGGER.debug("Initial alert status for '%s': SAFE (no active alerts)", loc)
+            return
+
+        for loc, new_status in new_data.items():
+            old_status = self.data.get(loc)
+            if old_status is None:
+                continue
+
+            # 1. Alert activation or deactivation
+            if new_status.is_active != old_status.is_active:
+                if new_status.is_active:
+                    threat_names = [t.description for t in new_status.threats]
+                    _LOGGER.info(
+                        "🚨 ALERT ACTIVATED for '%s'! Level: %s, Threats (%d): %s",
+                        loc,
+                        new_status.alert_level.value,
+                        new_status.threats_count,
+                        threat_names or "none",
+                    )
+                else:
+                    _LOGGER.info("🟢 ALERT CLEARED for '%s'! Status is now SAFE", loc)
+                continue
+
+            # If still active, check for changes in severity, threats, or affected regions
+            if new_status.is_active:
+                # 2. Severity level change (e.g. Yellow <-> Red)
+                if new_status.alert_level != old_status.alert_level:
+                    _LOGGER.info(
+                        "⚠️ Severity level changed for '%s': %s -> %s",
+                        loc,
+                        old_status.alert_level.value,
+                        new_status.alert_level.value,
+                    )
+
+                # 3. Threats list change
+                old_threats = [t.threat_type for t in old_status.threats]
+                new_threats = [t.threat_type for t in new_status.threats]
+                if old_threats != new_threats:
+                    new_threat_names = [t.description for t in new_status.threats]
+                    _LOGGER.info(
+                        "🛡️ Threats updated for '%s' (%d active): %s",
+                        loc,
+                        new_status.threats_count,
+                        new_threat_names or "none",
+                    )
+
+                # 4. Affected regions change
+                if new_status.affected_locations != old_status.affected_locations:
+                    _LOGGER.info(
+                        "📍 Affected regions updated for '%s': %s",
+                        loc,
+                        ", ".join(new_status.affected_locations) or "none",
+                    )
 
     def _build_status(self, loc: str) -> LocationAlertStatus:
         """Aggregate cached alerts for a single configured location."""
@@ -135,10 +205,27 @@ class NosAlertDataUpdateCoordinator(DataUpdateCoordinator[dict[str, LocationAler
                 active_ids = {a.location_id for a in alerts} & self._relevant_ids
 
                 if self._ubilling_active_ids is not None and active_ids != self._ubilling_active_ids:
+                    added_ids = active_ids - self._ubilling_active_ids
+                    removed_ids = self._ubilling_active_ids - active_ids
+
+                    added_names = [
+                        location_registry.get(i).display_name
+                        for i in added_ids if location_registry.get(i)
+                    ]
+                    removed_names = [
+                        location_registry.get(i).display_name
+                        for i in removed_ids if location_registry.get(i)
+                    ]
+
+                    changes = []
+                    if added_names:
+                        changes.append(f"started in {added_names}")
+                    if removed_names:
+                        changes.append(f"cleared in {removed_names}")
+
                     _LOGGER.info(
-                        "Ubilling API detected alert state change: %s -> %s. Requesting immediate alerts.in.ua refresh!",
-                        sorted(self._ubilling_active_ids),
-                        sorted(active_ids),
+                        "⚡ Ubilling fast trigger detected alert state change (%s). Requesting immediate alerts.in.ua refresh!",
+                        ", ".join(changes) if changes else f"{sorted(self._ubilling_active_ids)} -> {sorted(active_ids)}",
                     )
                     await self.async_request_refresh()
                 self._ubilling_active_ids = active_ids

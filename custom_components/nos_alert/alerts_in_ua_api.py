@@ -41,7 +41,7 @@ class AlertsInUaClient:
 
         async with self._session.get(API_ACTIVE_ALERTS_URL, headers=headers) as response:
             if response.status == 304:
-                _LOGGER.debug("alerts.in.ua API returned 304 Not Modified; using cached data")
+                _LOGGER.debug("alerts.in.ua: 304 Not Modified; %d active alerts in cache", len(self._cached_alerts))
                 return self._cached_alerts
 
             if response.status == 200:
@@ -50,9 +50,14 @@ class AlertsInUaClient:
                 data = await response.json()
                 alerts = (self._parse_alert(a) for a in data.get("alerts", []) if isinstance(a, dict))
                 self._cached_alerts = [a for a in alerts if a is not None]
+                _LOGGER.debug(
+                    "alerts.in.ua: Received %d active alerts (Last-Modified: %s)",
+                    len(self._cached_alerts),
+                    self._last_modified,
+                )
                 return self._cached_alerts
 
-            _LOGGER.error("alerts.in.ua API HTTP status error: %s", response.status)
+            _LOGGER.error("alerts.in.ua API HTTP error status %s", response.status)
             raise aiohttp.ClientResponseError(
                 request_info=response.request_info,
                 history=response.history,
